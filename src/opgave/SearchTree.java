@@ -31,7 +31,7 @@ public interface SearchTree<E extends Comparable<E>> extends Iterable<E> {
      * Ensures that this tree contains the specified element.
      * Returns <tt>true</tt> if this tree did not contain the specified element
      * before the call, returns <tt>false</tt> if this tree did contain the
-     * specified element and the element was added to the tree.
+     * specified element.
      *
      * @param o element whose presence in this collection is to be ensured
      * @return <tt>true</tt> if the elements in the tree changed as a result of

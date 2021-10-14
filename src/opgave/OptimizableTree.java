@@ -1,24 +1,21 @@
 package opgave;
 
-import java.util.Map;
+import java.util.List;
 
 public interface OptimizableTree<E extends Comparable<E>> extends SearchTree<E> {
 
     /**
-     * Rebuild the tree to be optimal for a collection of internal and external
-     * values
+     * Rebuild the tree to be optimal for a list of keys and their weights.
      *
-     * Given a collection of internal and external values mapped to their
-     * weights, rebuilds the current tree such that the binary search tree is
-     * optimal according to the given weights. The weights represent the
-     * probability of that value being searched. The collection of internal
-     * values should be included in the tree (resulting in a positive search)
-     * and the collection of external values should not be included in the tree
-     * (resulting in a negative search).
+     * Given a list of sorted keys and a list of weights such that for every
+     * index <tt>i</tt> between 0 and <tt>keys.size()</tt>, the key at
+     * <tt>keys.get(i)</tt> has a weight of <tt>weights.get(i)</tt>,
+     * rebuilds the current tree optimized according to the given weights.
      *
+     * The weights represent the probability of that value being searched.
      * The given weights should be strictly positive, but should not necessarily
      * be normalized (the sum of the weights might be different than 1). Thus
      * actual search counts may be passed as weights.
      */
-    void optimize(Map<E, Double> internal, Map<E, Double> external);
+    void optimize(List<E> keys, List<Double> weights);
 }

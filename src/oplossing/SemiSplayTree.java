@@ -72,18 +72,43 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             return false;
         }
         if (node.getLeft() != null) {
-
+            Node<E> next = node.getLeft();
+            if (next.getRight() == null) {
+                node.setValue(next.getValue());
+                node.setLeft(next.getLeft());
+                return true;
+            }
+            while (next.getRight() != null) {
+                if (next.getRight().getRight() == null) {
+                    break;
+                }
+                next = next.getRight();
+            }
+            Node<E> replacement = next.getRight();
+            assert replacement != null;
+            node.setValue(replacement.getValue());
+            next.setRight(replacement.getLeft());
         } else if (node.getRight() != null) {
-
+            Node<E> next = node.getRight();
+            if (next.getLeft() == null) {
+                node.setValue(next.getValue());
+                node.setLeft(next.getRight());
+                return true;
+            }
+            while (next.getLeft() != null) {
+                if (next.getLeft().getLeft() == null) {
+                    break;
+                }
+                next = next.getLeft();
+            }
+            Node<E> replacement = next.getLeft();
+            assert replacement != null;
+            node.setValue(replacement.getValue());
+            next.setRight(replacement.getRight());
         } else {
             node.setValue(comparable);
         }
         return true;
-    }
-
-    public Node<E> removeFindReplacement (Node<E> node) {
-
-        return null;
     }
 
     public Node<E> removeFindNode (E o, Node<E> node) {

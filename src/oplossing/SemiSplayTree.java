@@ -68,10 +68,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     @Override
     public boolean remove(E comparable) {
         Node<E> parent = removeFindParentNode(comparable, root);
-        Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
-        if (node == null) {
+        if (parent == null) {
             return false;
-        } if (node.getLeft() != null) {
+        }
+        Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
+        if (node.getLeft() != null) {
             Node<E> next = node.getLeft();
             if (next.getRight() == null) {
                 node.setValue(next.getValue());

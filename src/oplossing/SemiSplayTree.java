@@ -65,6 +65,14 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean remove(E comparable) {
+       boolean b = removeHelper(comparable);
+       if (b) {
+           size--;
+       }
+       return b;
+    }
+
+    public boolean removeHelper(E comparable) {
         Node<E> parent = removeFindParentNode(comparable, root);
         if (parent == null) {
             return false;

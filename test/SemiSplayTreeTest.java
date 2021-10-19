@@ -38,7 +38,7 @@ public class SemiSplayTreeTest {
     @Test
     public void removeTest1 () {
         SemiSplayTree<Integer> t = new SemiSplayTree<>();
-        int[] values = new int[]{2,3,14,1,4,6};
+        int[] values = new int[]{5,3,4,5,14,1,4,6};
         for (int v : values) {
             t.add(v);
         }
@@ -48,5 +48,7 @@ public class SemiSplayTreeTest {
         assertFalse(t.search(1));
         t.remove(2);
         assertFalse(t.search(2));
+        t.remove(5);
+        assertFalse(t.search(5));
     }
 }

@@ -28,8 +28,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public boolean searchHelper (E o, Node<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
             return node.getLeft() != null && searchHelper(o, node.getLeft());
-        }
-        else if (o.compareTo(node.getValue()) > 0) {
+        } else if (o.compareTo(node.getValue()) > 0) {
             return node.getRight() != null && searchHelper(o, node.getRight());
         }
         return true;
@@ -54,8 +53,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                 return true;
             }
             return addHelper(o, node.getLeft());
-        }
-        else if (o.compareTo(node.getValue()) > 0) {
+        } else if (o.compareTo(node.getValue()) > 0) {
             if (node.getRight() == null) {
                 node.setRight(new Node<>(o));
                 return true;
@@ -66,16 +64,40 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     // TODO (elias):
+    // go one left -> keep going right -> remove Node
     @Override
     public boolean remove(E comparable) {
-        return false;
-    }
+        Node<E> node = removeFindNode(comparable, root);
+        if (node == null) {
+            return false;
+        }
+        if (node.getLeft() != null) {
 
-    // strategy
-    // go to node -> safe location -> go one left -> keep going right -> remove Node
-    public boolean removeHelper () {
+        } else if (node.getRight() != null) {
+
+        } else {
+            node.setValue(comparable);
+        }
         return true;
     }
+
+    public Node<E> removeFindReplacement (Node<E> node) {
+
+        return null;
+    }
+
+    public Node<E> removeFindNode (E o, Node<E> node) {
+        if (node == null) {
+           return null ;
+        }
+        if (o.compareTo(node.getValue()) < 0) {
+            return removeFindNode(o, node.getLeft());
+        } else if (o.compareTo(node.getValue()) > 0) {
+            return removeFindNode(o, node.getRight());
+        }
+        return node;
+    }
+
 
     @Override
     public Node<E> root() {

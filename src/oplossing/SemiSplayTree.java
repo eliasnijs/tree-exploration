@@ -92,7 +92,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             Node<E> next = node.getRight();
             if (next.getLeft() == null) {
                 node.setValue(next.getValue());
-                node.setLeft(next.getRight());
+                node.setRight(next.getRight());
                 return true;
             }
             while (next.getLeft() != null) {
@@ -104,7 +104,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             Node<E> replacement = next.getLeft();
             assert replacement != null;
             node.setValue(replacement.getValue());
-            next.setRight(replacement.getRight());
+            next.setLeft(replacement.getRight());
         } else {
             if (comparable.compareTo(parent.getValue()) < 0) {
                parent.setLeft(null);

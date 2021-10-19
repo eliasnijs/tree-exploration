@@ -24,7 +24,7 @@ public class SemiSplayTreeTest {
     }
 
     @Test
-    public void todoTest1 () {
+    public void searchTest1 () {
         SemiSplayTree<Integer> t = new SemiSplayTree<>();
         int[] values = new int[]{2,3,14,1,4,6};
         for (int v : values) {
@@ -33,5 +33,16 @@ public class SemiSplayTreeTest {
         for (int v : values) {
             assertTrue(t.search(v));
         }
+    }
+
+    @Test
+    public void removeTest1 () {
+        SemiSplayTree<Integer> t = new SemiSplayTree<>();
+        int[] values = new int[]{2,3,14,1,4,6};
+        for (int v : values) {
+            t.add(v);
+        }
+        t.remove(6);
+        assertFalse(t.search(6));
     }
 }

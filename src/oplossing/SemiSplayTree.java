@@ -67,11 +67,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     // go one left -> keep going right -> remove Node
     @Override
     public boolean remove(E comparable) {
-        Node<E> node = removeFindNode(comparable, root);
+        Node<E> parent = removeFindParentNode(comparable, root);
+        Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
         if (node == null) {
             return false;
-        }
-        if (node.getLeft() != null) {
+        } if (node.getLeft() != null) {
             Node<E> next = node.getLeft();
             if (next.getRight() == null) {
                 node.setValue(next.getValue());
@@ -106,21 +106,34 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             node.setValue(replacement.getValue());
             next.setRight(replacement.getRight());
         } else {
-            node.setValue(comparable);
+            if (comparable.compareTo(parent.getValue()) < 0) {
+               parent.setLeft(null);
+            } else {
+               parent.setRight(null);
+            }
         }
         return true;
     }
 
-    public Node<E> removeFindNode (E o, Node<E> node) {
-        if (node == null) {
-           return null ;
+    public Node<E> removeFindParentNode (E o, Node<E> node) {
+        Node<E> l = node.getLeft();
+        Node<E> r = node.getRight();
+        if (l != null) {
+            if (l.getValue() == o) {
+                return node;
+            }
+        }
+        if (r != null) {
+            if (r.getValue() == o) {
+                return node;
+            }
         }
         if (o.compareTo(node.getValue()) < 0) {
-            return removeFindNode(o, node.getLeft());
+            return (l == null)? null : removeFindParentNode(o,l);
         } else if (o.compareTo(node.getValue()) > 0) {
-            return removeFindNode(o, node.getRight());
+            return (r == null)? null : removeFindParentNode(o,r);
         }
-        return node;
+        return null;
     }
 
 

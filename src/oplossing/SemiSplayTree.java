@@ -63,8 +63,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return false;
     }
 
-    // TODO (elias):
-    // go one left -> keep going right -> remove Node
     @Override
     public boolean remove(E comparable) {
         Node<E> parent = removeFindParentNode(comparable, root);
@@ -72,6 +70,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             return false;
         }
         Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
+        node = (comparable.compareTo(root.getValue()) == 0)? root : node;
         if (node.getLeft() != null) {
             Node<E> next = node.getLeft();
             if (next.getRight() == null) {
@@ -109,14 +108,19 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         } else {
             if (comparable.compareTo(parent.getValue()) < 0) {
                parent.setLeft(null);
-            } else {
+            } else if (comparable.compareTo(parent.getValue()) > 0) {
                parent.setRight(null);
+            } else {
+                root = null;
             }
         }
         return true;
     }
 
     public Node<E> removeFindParentNode (E o, Node<E> node) {
+        if (o.compareTo(node.getValue()) == 0) {
+            return node;
+        }
         Node<E> l = node.getLeft();
         Node<E> r = node.getRight();
         if (l != null) {

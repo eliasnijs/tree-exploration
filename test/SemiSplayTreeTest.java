@@ -44,5 +44,9 @@ public class SemiSplayTreeTest {
         }
         t.remove(6);
         assertFalse(t.search(6));
+        t.remove(1);
+        assertFalse(t.search(1));
+        t.remove(2);
+        assertFalse(t.search(2));
     }
 }

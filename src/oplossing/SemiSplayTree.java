@@ -185,7 +185,8 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
         @Override
         public void remove() {
-           tree.remove(currentNode);
+            System.out.print("from Iterator: ");
+            tree.remove(currentNode);
         }
 
         @Override

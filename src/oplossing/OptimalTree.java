@@ -75,7 +75,7 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
 
     @Override
     public boolean remove(E comparable) {
-        Node<E> parent = removeFindParentNode(comparable, root);
+        Node<E> parent = removeFindParentNode(comparable, root, root);
         if (parent == null) {
             return false;
         }
@@ -127,28 +127,37 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         return true;
     }
 
-    public Node<E> removeFindParentNode (E o, Node<E> node) {
-        if (o.compareTo(node.getValue()) == 0) {
-            return node;
-        }
-        Node<E> l = node.getLeft();
-        Node<E> r = node.getRight();
-        if (l != null) {
-            if (l.getValue() == o) {
-                return node;
-            }
-        }
-        if (r != null) {
-            if (r.getValue() == o) {
-                return node;
-            }
-        }
+//    public Node<E> removeFindParentNode (E o, Node<E> node) {
+//        if (o.compareTo(node.getValue()) == 0) {
+//            return node;
+//        }
+//        Node<E> l = node.getLeft();
+//        Node<E> r = node.getRight();
+//        if (l != null) {
+//            if (l.getValue() == o) {
+//                return node;
+//            }
+//        }
+//        if (r != null) {
+//            if (r.getValue() == o) {
+//                return node;
+//            }
+//        }
+//        if (o.compareTo(node.getValue()) < 0) {
+//            return (l == null)? null : removeFindParentNode(o,l);
+//        } else if (o.compareTo(node.getValue()) > 0) {
+//            return (r == null)? null : removeFindParentNode(o,r);
+//        }
+//        return null;
+//    }
+
+    public Node<E> removeFindParentNode (E o, Node<E> parent, Node<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
-            return (l == null)? null : removeFindParentNode(o,l);
+            return (node.getLeft() == null)? null : removeFindParentNode(o, node, node.getLeft());
         } else if (o.compareTo(node.getValue()) > 0) {
-            return (r == null)? null : removeFindParentNode(o,r);
+            return (node.getRight() == null)? null : removeFindParentNode(o, node, node.getRight());
         }
-        return null;
+        return parent;
     }
 
 

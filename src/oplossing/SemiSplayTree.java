@@ -11,7 +11,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     private int size;
 
     public SemiSplayTree () {
-        System.out.println("___________");
         root = null;
         size = 0;
     }
@@ -23,7 +22,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean search(E o) {
-        System.out.println("SEARCHING");
         return root != null && searchHelper(o, root);
     }
 
@@ -38,7 +36,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean add(E o) {
-        System.out.println("ADDING");
         if (root == null) {
             root = new Node<>(o);
             size += 1;
@@ -183,12 +180,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                throw new NoSuchElementException();
             }
             return (currentNode = fifo.pop());
-        }
-
-        @Override
-        public void remove() {
-            System.out.print("from Iterator: ");
-            tree.remove(currentNode);
         }
 
         @Override

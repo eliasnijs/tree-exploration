@@ -1,6 +1,10 @@
 import oplossing.SemiSplayTree;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SemiSplayTreeTest {
@@ -50,5 +54,20 @@ public class SemiSplayTreeTest {
         assertFalse(t.search(2));
         t.remove(5);
         assertFalse(t.search(5));
+    }
+
+    @Test
+    public void iteratorTest () {
+        SemiSplayTree<Integer> t = new SemiSplayTree<>();
+        int[] values = new int[]{5,3,4,5,14,1,4,6};
+        for (int v : values) {
+            t.add(v);
+        }
+
+        Iterator<Integer> iter = t.iterator();
+        iter.next();
+        iter.remove();
+        System.out.println(iter);
+        assertFalse(t.search(1));
     }
 }

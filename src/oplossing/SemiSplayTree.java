@@ -3,7 +3,7 @@ package oplossing;
 import opgave.Node;
 import opgave.SearchTree;
 
-import java.util.Iterator;
+import java.util.*;
 
 public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
@@ -134,6 +134,61 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     // TODO (elias):
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new Iter(this);
     }
+
+    class Iter implements Iterator<E> {
+
+        private final ArrayDeque<E> fifo;
+        private final SemiSplayTree<E> tree;
+
+        private E currentNode;
+
+        public Iter (SemiSplayTree<E> tree) {
+            this.fifo = new ArrayDeque<>();
+            this.tree = tree;
+            currentNode = null;
+            root = tree.root();
+            if (root != null) {
+                tree.add(root.getValue());
+                fifoMaker(root);
+            }
+        }
+
+        public void fifoMaker (Node<E> node) {
+            Node<E> l = node.getLeft();
+            Node<E> r = node.getRight();
+            if (l != null) {
+                fifoMaker(l);
+            }
+            fifo.add(node.getValue());
+            if (r != null) {
+                fifoMaker(r);
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !fifo.isEmpty();
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+               throw new NoSuchElementException();
+            }
+            return (currentNode = fifo.pop());
+        }
+
+        @Override
+        public void remove() {
+           tree.remove(currentNode);
+        }
+
+        @Override
+        public String toString() {
+            return fifo.toString();
+        }
+    }
+
 }

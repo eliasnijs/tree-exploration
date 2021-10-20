@@ -22,7 +22,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean search(E o) {
-        System.out.println(o);
         return root != null && searchHelper(o, root);
     }
 
@@ -37,6 +36,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean add(E o) {
+        System.out.println("ADDING");
         if (root == null) {
             root = new Node<>(o);
             size += 1;
@@ -66,6 +66,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean remove(E comparable) {
+        System.out.println("REMOVING");
        boolean b = removeHelper(comparable);
        if (b) {
            size--;
@@ -135,6 +136,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     // TODO (elias):
     @Override
     public Iterator<E> iterator() {
+        System.out.println("ITERATING");
         return new Iter(this);
     }
 

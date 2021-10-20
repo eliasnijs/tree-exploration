@@ -11,6 +11,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     private int size;
 
     public SemiSplayTree () {
+        System.out.println("___________");
         root = null;
         size = 0;
     }

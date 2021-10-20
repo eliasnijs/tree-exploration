@@ -22,6 +22,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean search(E o) {
+        System.out.println("SEARCHING");
         return root != null && searchHelper(o, root);
     }
 

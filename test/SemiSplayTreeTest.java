@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,6 +58,43 @@ public class SemiSplayTreeTest {
     }
 
     @Test
+    public void removeTest2 () throws Exception {
+        List<Integer> arr = new ArrayList<>();
+        for (int i = -3; i < 3; i++) {
+            arr.add(i);
+        }
+        List<List<Integer>> perm = generatePerm(arr);
+        for (List<Integer> l : perm) {
+            SemiSplayTree<Integer> st = new SemiSplayTree<>();
+            for (int v : l) {
+               st.add(v);
+            }
+            Collections.shuffle(l);
+            for (int v : l) {
+                System.out.println((st.root() == null)?null:st.root().getValue() + " " + st.iterator() + " " + v);
+                st.remove(v);
+                if (st.search(v)) {
+                    System.out.println((st.root() == null)?null:st.root().getValue() + " " + st.iterator() + " " + v);
+                    throw new Exception();
+                }
+            }
+        }
+    }
+
+    @Test
+    public void removeTest3 () {
+        SemiSplayTree<Integer> t = new SemiSplayTree<>();
+        int[] values = new int[]{2,1,3};
+        for (int v : values) {
+            t.add(v);
+        }
+        System.out.println(t.root().getValue() + " " + t.iterator() + " " + 2);
+        t.remove(2);
+        System.out.println(t.root().getValue() + " " + t.iterator() + " " + 2);
+        assertFalse(t.search(2));
+    }
+
+    @Test
     public void iteratorTest () {
         SemiSplayTree<Integer> t = new SemiSplayTree<>();
         int[] values = new int[]{5,3,4,5,14,1,4,6};
@@ -66,8 +104,25 @@ public class SemiSplayTreeTest {
 
         Iterator<Integer> iter = t.iterator();
         iter.next();
-        iter.remove();
         System.out.println(iter);
-        assertFalse(t.search(1));
+    }
+
+    public <E> List<List<E>> generatePerm(List<E> original) {
+        if (original.isEmpty()) {
+            List<List<E>> result = new ArrayList<>();
+            result.add(new ArrayList<>());
+            return result;
+        }
+        E firstElement = original.remove(0);
+        List<List<E>> returnValue = new ArrayList<>();
+        List<List<E>> permutations = generatePerm(original);
+        for (List<E> smallerPermutated : permutations) {
+            for (int index = 0; index <= smallerPermutated.size(); index++) {
+                List<E> temp = new ArrayList<>(smallerPermutated);
+                temp.add(index, firstElement);
+                returnValue.add(temp);
+            }
+        }
+        return returnValue;
     }
 }

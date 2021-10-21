@@ -65,7 +65,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     @Override
     public boolean remove(E comparable) {
-        System.out.println("REMOVING");
        boolean b = removeHelper(comparable);
        if (b) {
            size--;
@@ -74,23 +73,24 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     public boolean removeHelper(E comparable) {
+        if (root == null) { return false; }
+
         Node<E> parent = removeFindParentNode(comparable, root, root);
-        if (parent == null) {
-            return false;
-        }
+        if (parent == null) { return false; }
+
         Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
         node = (comparable.compareTo(root.getValue()) == 0)? root : node;
+
         if (node.getLeft() != null) {
             Node<E> nParent = node.getLeft();
             if (nParent.getRight() == null) {
                 node.setValue(nParent.getValue());
-                node.setRight(nParent.getRight());
+                node.setLeft(nParent.getLeft());
                 return true;
             }
             nParent = removeFindRightParent(node, nParent);
-            Node<E> replacement = nParent.getRight();
-            node.setValue(replacement.getValue());
-            nParent.setRight(replacement.getLeft());
+            node.setValue(nParent.getRight().getValue());
+            nParent.setRight(nParent.getRight().getLeft());
         } else if (node.getRight() != null) {
             Node<E> nParent = node.getRight();
             if (nParent.getLeft() == null) {
@@ -99,15 +99,13 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                 return true;
             }
             nParent = removeFindLeftParent(node, nParent);
-            Node<E> replacement = nParent.getLeft();
-            assert replacement != null;
-            node.setValue(replacement.getValue());
-            nParent.setLeft(replacement.getRight());
+            node.setValue(nParent.getLeft().getValue());
+            nParent.setLeft(nParent.getLeft().getRight());
         } else {
             if (comparable.compareTo(parent.getValue()) < 0) {
-               parent.setLeft(null);
+                parent.setLeft(null);
             } else if (comparable.compareTo(parent.getValue()) > 0) {
-               parent.setRight(null);
+                parent.setRight(null);
             } else {
                 root = null;
             }
@@ -120,11 +118,13 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     public Node<E> removeFindLeftParent (Node<E> parent, Node<E> node) {
-        return (node.getRight() == null)? parent : removeFindRightParent(node, node.getLeft());
+        return (node.getLeft() == null)? parent : removeFindLeftParent(node, node.getLeft());
     }
 
     public Node<E> removeFindParentNode (E o, Node<E> parent, Node<E> node) {
-        return (o.compareTo(node.getValue()) == 0)? parent : (o.compareTo(node.getValue()) < 0)? ((node.getLeft() == null)? null : removeFindParentNode(o, node, node.getLeft())) : ((node.getRight() == null)? null : removeFindParentNode(o, node, node.getRight()));
+        return (o.compareTo(node.getValue()) == 0)? parent : (o.compareTo(node.getValue()) < 0)?
+                ((node.getLeft() != null)? removeFindParentNode(o, node, node.getLeft()) : null) :
+                ((node.getRight() != null)? removeFindParentNode(o, node, node.getRight()) : null);
     }
 
     @Override
@@ -132,27 +132,18 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return root;
     }
 
-    // TODO (elias):
     @Override
     public Iterator<E> iterator() {
-        System.out.println("ITERATING");
-        return new Iter(this);
+        return new Iter(root);
     }
 
     class Iter implements Iterator<E> {
 
         private final ArrayDeque<E> fifo;
-        private final SemiSplayTree<E> tree;
 
-        private E currentNode;
-
-        public Iter (SemiSplayTree<E> tree) {
+        public Iter (Node<E> root) {
             this.fifo = new ArrayDeque<>();
-            this.tree = tree;
-            currentNode = null;
-            root = tree.root();
             if (root != null) {
-                tree.add(root.getValue());
                 fifoMaker(root);
             }
         }
@@ -179,7 +170,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             if (!hasNext()) {
                throw new NoSuchElementException();
             }
-            return (currentNode = fifo.pop());
+            return fifo.pop();
         }
 
         @Override

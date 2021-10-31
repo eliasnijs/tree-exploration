@@ -107,6 +107,7 @@ public class SemiSplayTreeTest {
         System.out.println(iter);
     }
 
+    // generatePerm function (c) https://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively answer by DaveFar
     public <E> List<List<E>> generatePerm(List<E> original) {
         if (original.isEmpty()) {
             List<List<E>> result = new ArrayList<>();

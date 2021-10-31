@@ -101,14 +101,12 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             nParent = removeFindLeftParent(node, nParent);
             node.setValue(nParent.getLeft().getValue());
             nParent.setLeft(nParent.getLeft().getRight());
+        } else if (comparable.compareTo(parent.getValue()) < 0) {
+            parent.setLeft(null);
+        } else if (comparable.compareTo(parent.getValue()) > 0) {
+            parent.setRight(null);
         } else {
-            if (comparable.compareTo(parent.getValue()) < 0) {
-                parent.setLeft(null);
-            } else if (comparable.compareTo(parent.getValue()) > 0) {
-                parent.setRight(null);
-            } else {
-                root = null;
-            }
+            root = null;
         }
         return true;
     }

@@ -17,6 +17,7 @@ public class SemiSplayTreeTest extends Test {
     }
 
     public void run () {
+        basicTreeTest();
         splaySimpleBB();
         splaySimpleBS();
         splaySimpleSS();

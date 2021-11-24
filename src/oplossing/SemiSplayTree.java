@@ -73,6 +73,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             if (splaypath.size() == 2) {
                 return;
             }
+            break;
         }
     }
 
@@ -96,6 +97,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         boolean found = searchHelper(o, root);
         if (found)
             splay();
+        splaypath.clear();
         return found;
     }
 

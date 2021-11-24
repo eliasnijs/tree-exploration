@@ -40,3 +40,4 @@ out/*
 # Personal stuff
 build/
 report/
+*.args

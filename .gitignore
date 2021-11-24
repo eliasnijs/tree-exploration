@@ -36,3 +36,7 @@ out/*
 # Word
 *.docx
 *.doc
+
+# Personal stuff
+build/
+report/

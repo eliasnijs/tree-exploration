@@ -3,10 +3,10 @@ package oplossing;
 import opgave.Node;
 import opgave.OptimizableTree;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> {
+    
     private Node<E> root;
     private int size;
 
@@ -24,12 +24,20 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
     public void optimize(List<E> keys, List<Double> internalWeights, List<Double> externalWeights) {
 
     }
+    
+    // Get root of tree
+    @Override
+    public Node<E> root() {
+        return root;
+    }
 
+    // Get size of tree
     @Override
     public int size() {
         return size;
     }
 
+    // Search node
     @Override
     public boolean search(E o) {
         return root != null && searchHelper(o, root);
@@ -44,6 +52,7 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         return true;
     }
 
+    // Add node
     @Override
     public boolean add(E o) {
         if (root == null) {
@@ -73,101 +82,114 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         return false;
     }
 
+    // Remove node
     @Override
     public boolean remove(E comparable) {
+        if (root == null) {
+            return false; 
+        }
+
         Node<E> parent = removeFindParentNode(comparable, root, root);
         if (parent == null) {
-            return false;
+            return false; 
         }
+
         Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
         node = (comparable.compareTo(root.getValue()) == 0)? root : node;
+
         if (node.getLeft() != null) {
-            Node<E> next = node.getLeft();
-            if (next.getRight() == null) {
-                node.setValue(next.getValue());
-                node.setLeft(next.getLeft());
-                return true;
+            Node<E> nParent = node.getLeft();
+            if (nParent.getRight() != null) {
+                nParent = removeFindRightParent(node, nParent);
+                node.setValue(nParent.getRight().getValue());
+                nParent.setRight(nParent.getRight().getLeft());
             }
-            while (next.getRight() != null) {
-                if (next.getRight().getRight() == null) {
-                    break;
-                }
-                next = next.getRight();
-            }
-            Node<E> replacement = next.getRight();
-            assert replacement != null;
-            node.setValue(replacement.getValue());
-            next.setRight(replacement.getLeft());
+            node.setValue(nParent.getValue());
+            node.setLeft(nParent.getLeft());
         } else if (node.getRight() != null) {
-            Node<E> next = node.getRight();
-            if (next.getLeft() == null) {
-                node.setValue(next.getValue());
-                node.setLeft(next.getRight());
-                return true;
+            Node<E> nParent = node.getRight();
+            if (nParent.getLeft() != null) {
+                nParent = removeFindLeftParent(node, nParent);
+                node.setValue(nParent.getLeft().getValue());
+                nParent.setLeft(nParent.getLeft().getRight());
             }
-            while (next.getLeft() != null) {
-                if (next.getLeft().getLeft() == null) {
-                    break;
-                }
-                next = next.getLeft();
-            }
-            Node<E> replacement = next.getLeft();
-            assert replacement != null;
-            node.setValue(replacement.getValue());
-            next.setRight(replacement.getRight());
+            node.setValue(nParent.getValue());
+            node.setRight(nParent.getRight());
+        } else if (comparable.compareTo(parent.getValue()) < 0) {
+            parent.setLeft(null);
+        } else if (comparable.compareTo(parent.getValue()) > 0) {
+            parent.setRight(null);
         } else {
-            if (comparable.compareTo(parent.getValue()) < 0) {
-                parent.setLeft(null);
-            } else if (comparable.compareTo(parent.getValue()) > 0) {
-                parent.setRight(null);
-            } else {
-                root = null;
-            }
+            root = null;
         }
-        return true;
+
+       size--;
+       return true;
     }
 
-//    public Node<E> removeFindParentNode (E o, Node<E> node) {
-//        if (o.compareTo(node.getValue()) == 0) {
-//            return node;
-//        }
-//        Node<E> l = node.getLeft();
-//        Node<E> r = node.getRight();
-//        if (l != null) {
-//            if (l.getValue() == o) {
-//                return node;
-//            }
-//        }
-//        if (r != null) {
-//            if (r.getValue() == o) {
-//                return node;
-//            }
-//        }
-//        if (o.compareTo(node.getValue()) < 0) {
-//            return (l == null)? null : removeFindParentNode(o,l);
-//        } else if (o.compareTo(node.getValue()) > 0) {
-//            return (r == null)? null : removeFindParentNode(o,r);
-//        }
-//        return null;
-//    }
+    public Node<E> removeFindRightParent (Node<E> parent, Node<E> node) {
+        return (node.getRight() == null)? parent : removeFindRightParent(node, node.getRight());
+    }
+
+    public Node<E> removeFindLeftParent (Node<E> parent, Node<E> node) {
+        return (node.getLeft() == null)? parent : removeFindLeftParent(node, node.getLeft());
+    }
 
     public Node<E> removeFindParentNode (E o, Node<E> parent, Node<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
-            return (node.getLeft() == null)? null : removeFindParentNode(o, node, node.getLeft());
+            return (node.getLeft() != null)? removeFindParentNode(o, node, node.getLeft()) : null;
         } else if (o.compareTo(node.getValue()) > 0) {
-            return (node.getRight() == null)? null : removeFindParentNode(o, node, node.getRight());
+            return (node.getRight() != null)? removeFindParentNode(o, node, node.getRight()) : null;
         }
         return parent;
     }
 
-
-    @Override
-    public Node<E> root() {
-        return root;
-    }
-
+    // Iterator
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new Iter(root);
     }
+    
+    class Iter implements Iterator<E> {
+
+        private final ArrayDeque<E> fifo;
+
+        public Iter (Node<E> root) {
+            this.fifo = new ArrayDeque<>();
+            if (root != null) {
+                fifoMaker(root);
+            }
+        }
+
+        public void fifoMaker (Node<E> node) {
+            Node<E> l = node.getLeft();
+            Node<E> r = node.getRight();
+            if (l != null) {
+                fifoMaker(l);
+            }
+            fifo.add(node.getValue());
+            if (r != null) {
+                fifoMaker(r);
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !fifo.isEmpty();
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+               throw new NoSuchElementException();
+            }
+            return fifo.pop();
+        }
+
+        @Override
+        public String toString() {
+            return fifo.toString();
+        }
+    }
+
 }

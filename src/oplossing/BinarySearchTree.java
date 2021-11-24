@@ -5,75 +5,14 @@ import opgave.SearchTree;
 
 import java.util.*;
 
-public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
+public class BinarySearchTree<E extends Comparable<E>> implements SearchTree<E> {
 
     private Node<E> root;
     private int size;
 
-    private Stack<Node<E>> splaypath;
-
-    public SemiSplayTree () {
+    public void SemiSplayTree () {
         root = null;
         size = 0;
-        splaypath = new Stack<>();
-    }
-
-    public void splay () {
-        if (splaypath.size() < 3) {
-            return;
-        }
-        while (true) {
-            
-            Node<E> next = splaypath.pop();
-            Node<E> mid = splaypath.pop();
-            Node<E> prev = splaypath.pop();
-
-            if (prev.getValue().compareTo(mid.getValue()) < 0 &&
-                prev.getValue().compareTo(next.getValue()) < 0 )
-            {
-                if (mid.getValue().compareTo(next.getValue()) < 0) {
-                    prev.setRight(mid.getLeft());
-                    mid.setLeft(prev);
-                    splaypath.push(mid);
-                } else {
-                    prev.setRight(next.getLeft());
-                    next.setLeft(prev);
-                    mid.setLeft(next.getRight());
-                    next.setRight(mid);
-                    splaypath.push(next);
-                } 
-            } else {
-                if (mid.getValue().compareTo(next.getValue()) > 0) {
-                    prev.setLeft(mid.getRight());
-                    mid.setRight(prev);
-                    splaypath.push(mid);
-                } else {
-                    prev.setLeft(next.getRight());
-                    next.setRight(prev);
-                    mid.setRight(next.getLeft());
-                    next.setLeft(mid);
-                    splaypath.push(next);
-                } 
-            }
-            
-            if (splaypath.size() == 1) {
-                root = splaypath.pop();        
-                return;
-            }
-            
-            Node<E> child = splaypath.pop();
-            Node<E> parent = splaypath.pop();
-            if (child.getValue().compareTo(parent.getValue()) < 0) {
-                parent.setLeft(child);    
-            } else {
-                parent.setRight(child);    
-            }
-            splaypath.push(parent);
-            splaypath.push(child);
-            if (splaypath.size() == 2) {
-                return;
-            }
-        }
     }
 
     // Get root of tree
@@ -88,19 +27,13 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return size;
     }
 
-    // Search node
+    // Search Node
     @Override
     public boolean search(E o) {
-        if (root == null) 
-            return false;
-        boolean found = searchHelper(o, root);
-        if (found)
-            splay();
-        return found;
+        return root != null && searchHelper(o, root);
     }
 
     public boolean searchHelper (E o, Node<E> node) {
-        splaypath.push(node);
         if (o.compareTo(node.getValue()) < 0) {
             return node.getLeft() != null && searchHelper(o, node.getLeft());
         } else if (o.compareTo(node.getValue()) > 0) {

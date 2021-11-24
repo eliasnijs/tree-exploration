@@ -9,8 +9,6 @@ Universiteit Gent
 In dit verslag bespreek ik mijn uitvoering van het project voor Algoritmen en Datastructuren 2 aand Universiteit Gent 2021. De opgave van dit project bestond erin een Semi-splayboom, een binaire zoekboom, met balancering op aanvraag, en een zoekboom volgens eigen heuristiek optimaal te implementeren aan de hand van benchmarks en theoretische inzichten. 
 .AE
 .bp
-.PP
-This page was intentionally left blank
 
 .bp
 .NH

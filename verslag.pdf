@@ -1,11 +1,11 @@
 %!PS-Adobe-3.0
 %%Creator: groff version 1.22.4
-%%CreationDate: Sun Oct 17 21:36:46 2021
+%%CreationDate: Sat Nov 20 19:51:33 2021
 %%DocumentNeededResources: font Times-Bold
 %%+ font Times-Italic
 %%+ font Times-Roman
 %%DocumentSuppliedResources: procset grops 1.22 4
-%%Pages: 6
+%%Pages: 5
 %%PageOrder: Ascend
 %%DocumentMedia: Default 595 842 0 () ()
 %%Orientation: Portrait
@@ -252,34 +252,28 @@ BP
 %%BeginPageSetup
 BP
 %%EndPageSetup
-/F0 10/Times-Roman@0 SF(-2-)282.17 48 Q(This page w)97 84 Q
-(as intentionally left blank)-.1 E 0 Cg EP
+/F0 10/Times-Roman@0 SF(-2-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
+(1. Semi-splayboom)72 84 R 2.5(1.1. Initiele)72 108 R(implementatie)2.5
+E 2.5(1.2. Optimalisatie)72 132 R(aan de hand v)2.5 E(an benchmarks)-.1
+E 0 Cg EP
 %%Page: 3 3
 %%BeginPageSetup
 BP
 %%EndPageSetup
 /F0 10/Times-Roman@0 SF(-3-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
-(1. Semi-splayboom)72 84 R 2.5(1.1. Initiele)72 108 R(implementatie)2.5
-E 2.5(1.2. Optimalisatie)72 132 R(aan de hand v)2.5 E(an benchmarks)-.1
-E 0 Cg EP
+(2. Binair)72 84 R 2.5(ez)-.18 G(oekboom met balancering op aan)-2.5 E
+(vraag)-.4 E 2.5(2.1. Initiele)72 120 R(implementatie)2.5 E 2.5
+(2.2. Optimalisatie)72 156 R(aan de hand v)2.5 E(an benchmarks)-.1 E 0
+Cg EP
 %%Page: 4 4
 %%BeginPageSetup
 BP
 %%EndPageSetup
 /F0 10/Times-Roman@0 SF(-4-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
-(2. Binair)72 84 R 2.5(ez)-.18 G(oekboom met balancering op aan)-2.5 E
-(vraag)-.4 E 2.5(2.1. Initiele)72 120 R(implementatie)2.5 E 2.5
-(2.2. Optimalisatie)72 156 R(aan de hand v)2.5 E(an benchmarks)-.1 E 0
-Cg EP
-%%Page: 5 5
-%%BeginPageSetup
-BP
-%%EndPageSetup
-/F0 10/Times-Roman@0 SF(-5-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
 (3. Binair)72 84 R 2.5(ez)-.18 G(oekboom met heuristiek naar k)-2.5 E
 (euze)-.1 E 2.5(3.1. Ov)72 120 R(erzicht v)-.1 E(an de v)-.1 E
 (erschillende heuristiek)-.1 E(en)-.1 E F0(sdf)97 147.6 Q 0 Cg EP
-%%Page: 1 6
+%%Page: 1 5
 %%BeginPageSetup
 BP
 %%EndPageSetup
@@ -289,10 +283,10 @@ EEND 504 48 EBEGIN
 [/Dest /pdf:bm1T /Title (Table of Contents) /OUT pdfmark
 EEND/F0 12/Times-Bold@0 SF -1.104(Ta)242.886 96 S(ble of Contents)1.104
 E/F1 10/Times-Roman@0 SF 9.22(Semi-splayboom .)72 132 R -2.5 10
-(.......................... 3)10 H
+(.......................... 2)10 H
 (Binaire zoekboom met balancering op aan)72 144 Q 11.06(vraag .)-.4 F
--2.5 10(................ 4)10 H(Binaire zoekboom met heuristiek naar k)
-72 156 Q 11.03(euze .)-.1 F -2.5 10(................. 5)10 H 0 Cg EP
+-2.5 10(................ 3)10 H(Binaire zoekboom met heuristiek naar k)
+72 156 Q 11.03(euze .)-.1 F -2.5 10(................. 4)10 H 0 Cg EP
 %%Trailer
 end
 %%EOF

@@ -38,6 +38,17 @@ public class Node<E extends Comparable<E>> {
         return right;
     }
 
+    public String treeToString() {
+        return 
+            "{" + 
+            value + 
+            ", <- " + 
+            ((left == null)? "null" : left.treeToString()) + 
+            ", -> " + 
+            ((right == null)? "null" : right.treeToString()) + 
+            "}";
+    }
+    
     @Override
     public String toString() {
         return "" + value;

@@ -29,7 +29,7 @@ public class Test {
         if (b && PRINT_PRIORITY_ALL) {
             System.out.println("\033[0;32m   SUCCES\033[0m   |    " + name);
         } else if (!b || !PRINT_PRIORITY_ALL) {
-            System.out.println("\033[0;31m   FAILED\033[0m   |    " + "\033[0;31m ! " + name +  "\033[0m");
+            System.out.println("\033[0;31m   FAILED\033[0m   |    " + "\033[0;31m" + name +  "\033[0m");
         }
     }
     
@@ -39,23 +39,32 @@ public class Test {
            current = n1.getValue() == n2.getValue();
         } 
 
+        System.out.println("current values: " + n1.getValue() + ", " + n2.getValue());
         if (n1 == null || n2 == null) {
             // System.out.println("   > Node comparison (c): " + current);
             return current;
         }
         
+        System.out.println("left null?:\t" + (n1.getLeft() != null) + ", " + (n2.getLeft() != null));
         boolean left = n1.getLeft() == null && n2.getLeft() == null;
         if (!left && n1.getLeft() != null && n2.getLeft() != null) {
            left = n1.getLeft().getValue() == n2.getLeft().getValue();
+           System.out.println("left values: \t" + n1.getLeft().getValue() + ", " + n2.getLeft().getValue());
         } 
         
+        System.out.println("right null?:\t" + (n1.getRight() != null) + ", " + (n2.getRight() != null));
         boolean right = n1.getRight() == null && n2.getRight() == null;
         if (!right && n1.getRight() != null && n2.getRight() != null) {
             right = n1.getRight().getValue() == n2.getRight().getValue();
+            System.out.println("right values:\t" + n1.getRight().getValue() + ", " + n2.getRight().getValue());
         }  
         
-        // System.out.println("   > Node comparison (c l r): " + current + " " + left + " " + right);
+        System.out.println("> Node comparison (c l r): " + current + " " + left + " " + right);
         return current && left && right;
+    }
+
+    public boolean compareTree(Node r1, Node r2) {
+        return r1.treeToString().equals(r2.treeToString());
     }
    
     public <E> List<List<E>> generatePerm(List<E> original) {

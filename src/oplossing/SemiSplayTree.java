@@ -18,16 +18,18 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         splaypath = new Stack<>();
     }
 
+    public void setRoot (Node<E> n) {
+        root = n;
+    }
+
     public void splay () {
         if (splaypath.size() < 3) {
             return;
         }
-        while (true) {
-            
+        while (splaypath.size() > 2) {
             Node<E> next = splaypath.pop();
             Node<E> mid = splaypath.pop();
-            Node<E> prev = splaypath.pop();
-
+            Node<E> prev = splaypath.pop();  
             if (prev.getValue().compareTo(mid.getValue()) < 0 &&
                 prev.getValue().compareTo(next.getValue()) < 0 )
             {
@@ -55,12 +57,12 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                     splaypath.push(next);
                 } 
             }
-            
+
             if (splaypath.size() == 1) {
                 root = splaypath.pop();        
-                return;
+                break;
             }
-            
+
             Node<E> child = splaypath.pop();
             Node<E> parent = splaypath.pop();
             if (child.getValue().compareTo(parent.getValue()) < 0) {
@@ -70,11 +72,8 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             }
             splaypath.push(parent);
             splaypath.push(child);
-            if (splaypath.size() == 2) {
-                return;
-            }
-            break;
         }
+        splaypath.clear();
     }
 
     // Get root of tree
@@ -119,21 +118,30 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             size += 1;
             return true;
         }
+        
+        splaypath.clear();
         boolean b = addHelper(o, root);
+        if (b) {
+            splay();
+        }
+
         size += b? 1 : 0;
         return b;
     }
 
     public boolean addHelper(E o, Node<E> node) {
+        splaypath.push(node);
         if (o.compareTo(node.getValue()) < 0) {
             if (node.getLeft() == null) {
                 node.setLeft(new Node<>(o));
+                splaypath.push(node.getLeft());
                 return true;
             }
             return addHelper(o, node.getLeft());
         } else if (o.compareTo(node.getValue()) > 0) {
             if (node.getRight() == null) {
                 node.setRight(new Node<>(o));
+                splaypath.push(node.getRight());
                 return true;
             }
             return addHelper(o, node.getRight());
@@ -146,7 +154,8 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public boolean remove(E comparable) {
         if (root == null) 
             return false; 
-        
+       
+        splaypath.clear();
         Node<E> parent = removeFindParentNode(comparable, root, root);
         if (parent == null)
             return false; 
@@ -154,7 +163,24 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
         node = (comparable.compareTo(root.getValue()) == 0)? root : node;
 
-        if (node.getLeft() != null) {
+        int nodeIsSmaller = comparable.compareTo(parent.getValue());
+        if (node.getLeft() != null && node.getRight() == null) {
+            if (nodeIsSmaller < 0) {
+                parent.setLeft(node.getLeft());
+            } else if (nodeIsSmaller > 0) {
+                parent.setRight(node.getLeft());
+            } else {
+                root = node.getLeft();
+            }
+        } else if (node.getLeft() == null && node.getRight() != null) {
+            if (nodeIsSmaller < 0) {
+                parent.setLeft(node.getRight());
+            } else if (nodeIsSmaller > 0) {
+                parent.setRight(node.getRight());
+            } else {
+                root = node.getRight();
+            }
+        } else if (node.getLeft() != null) {
             Node<E> nParent = node.getLeft();
             if (nParent.getRight() != null) {
                 nParent = removeFindRightParent(node, nParent);
@@ -163,39 +189,30 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             }
             node.setValue(nParent.getValue());
             node.setLeft(nParent.getLeft());
-        } else if (node.getRight() != null) {
-            Node<E> nParent = node.getRight();
-            if (nParent.getLeft() != null) {
-                nParent = removeFindLeftParent(node, nParent);
-                node.setValue(nParent.getLeft().getValue());
-                nParent.setLeft(nParent.getLeft().getRight());
-            }
-            node.setValue(nParent.getValue());
-            node.setRight(nParent.getRight());
-        } else if (comparable.compareTo(parent.getValue()) < 0) {
+            splaypath.push(node);
+        } else if (nodeIsSmaller < 0) {
             parent.setLeft(null);
-        } else if (comparable.compareTo(parent.getValue()) > 0) {
+        } else if (nodeIsSmaller > 0) {
             parent.setRight(null);
         } else {
             root = null;
         }
 
-       size--;
-       return true;
+        splay();
+        size--;
+        return true;
     }
 
     public Node<E> removeFindRightParent (Node<E> parent, Node<E> node) {
         return (node.getRight() == null)? parent : removeFindRightParent(node, node.getRight());
     }
-
-    public Node<E> removeFindLeftParent (Node<E> parent, Node<E> node) {
-        return (node.getLeft() == null)? parent : removeFindLeftParent(node, node.getLeft());
-    }
-
+    
     public Node<E> removeFindParentNode (E o, Node<E> parent, Node<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
+            splaypath.push(node);
             return (node.getLeft() != null)? removeFindParentNode(o, node, node.getLeft()) : null;
         } else if (o.compareTo(node.getValue()) > 0) {
+            splaypath.push(node);
             return (node.getRight() != null)? removeFindParentNode(o, node, node.getRight()) : null;
         }
         return parent;

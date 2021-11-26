@@ -19,7 +19,7 @@ public class SemiSplayTreeTest extends Test {
     public void run () {
         // basicTreeTests();
         // simpleSplayTests();
-        splayNormalTests();
+        // splayNormalTests();
     }
 
     public void basicTreeTests () {
@@ -225,6 +225,7 @@ public class SemiSplayTreeTest extends Test {
         splayAdd();
         splayRemove1();
         splayRemove2();
+        splayRemove3();
     }
 
     // Nodes underneath
@@ -375,10 +376,30 @@ public class SemiSplayTreeTest extends Test {
 
         assertTrue("splay normal remove 2 - compare tree with reference", compareTree(treeRoot, refRoot));
         return true;
-
     }
 
+    public boolean splayRemove3 () {
+        BinarySearchTree<Integer> reference = new BinarySearchTree<>();
+        int[] bstValues = {5, 2, 1, 3, 6, 9};
+        for (int i : bstValues) {
+            reference.add(i);
+        }
 
+        BinarySearchTree<Integer> construction = new BinarySearchTree<>();
+        int[] tValues = {8, 7, 4, 1, 6, 2, 3};
+        for (int i : tValues) {
+            construction.add(i);
+        }
+        SemiSplayTree<Integer> tree = new SemiSplayTree<>();
+        tree.setRoot(construction.root());
+        tree.remove(4);
+       
+        Node refRoot = reference.root(); 
+        Node treeRoot = tree.root(); 
+
+        assertTrue("splay normal remove 2 - compare tree with reference", compareTree(treeRoot, refRoot));
+        return true;
+    }
 
 
 

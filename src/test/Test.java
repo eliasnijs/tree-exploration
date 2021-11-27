@@ -59,6 +59,14 @@ public class Test {
     public boolean compareTree(Node r1, Node r2) {
         return (r1 != null && r2 != null)? r1.treeToString().equals(r2.treeToString()) : false;
     }
+
+    public List<Integer> toList(Iterable<Integer> iterable) {
+        List<Integer> list = new ArrayList<>();
+        for (Integer integer : iterable) {
+            list.add(integer);
+        }
+        return list;
+    }
    
     public <E> List<List<E>> generatePerm(List<E> original) {
     // generatePerm function (c) https://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively answer by DaveFar

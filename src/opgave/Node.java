@@ -110,8 +110,8 @@ public class Node<E extends Comparable<E>> {
         return 
             "{" + 
             value + 
-            ((left == null)? "" : "<" + left.treeToString()) + 
-            ((right == null)? "" : ">" + right.treeToString()) + 
+            ((left == null)? "" : " < " + left.treeToString()) + 
+            ((right == null)? "" : " > " + right.treeToString()) + 
             "}";
     }
     

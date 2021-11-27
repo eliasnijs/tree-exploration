@@ -21,9 +21,10 @@ public class SemiSplayTreeTest extends Test {
     }
 
     public void run () {
-        // basicTreeTests();
-        // simpleSplayTests();
+        basicTreeTests();
+        simpleSplayTests();
         splayNormalTests();
+        iteratorTest();
     }
 
     public void basicTreeTests () {
@@ -36,13 +37,6 @@ public class SemiSplayTreeTest extends Test {
         iteratorTest();
     }
 
-    public void simpleSplayTests () {
-        splaySimpleBB();
-        splaySimpleBS();
-        splaySimpleSS();
-        splaySimpleSB();
-    }
-    
    
     public void compileTest () {
         SemiSplayTree<Integer> t = new SemiSplayTree<>();
@@ -55,10 +49,12 @@ public class SemiSplayTreeTest extends Test {
         for (int v : values) {
             t.add(v);
         }
-        assertTrue("add-test 1 - node 2", t.root().getValue() == 2);
-        assertTrue("add-test 1 - node 3", t.root().getRight().getValue() == 3);
-        assertTrue("add-test 1 - node 1", t.root().getLeft().getValue() == 1);
-        assertTrue("add-test 1 - node 4", t.root().getRight().getRight().getValue() == 4);
+        BinarySearchTree<Integer> t2 = new BinarySearchTree<>();
+        int[] values2 = new int[]{3,2,1,4};
+        for (int v : values2) {
+            t2.add(v);
+        }
+        assertTrue("simple add test 1", compareTree(t.root(),t2.root()));
     }
 
     public void searchTest1 () {
@@ -128,11 +124,15 @@ public class SemiSplayTreeTest extends Test {
         for (int v : values) {
             t.add(v);
         }
-
         Iterator<Integer> iter = t.iterator();
-        iter.next();
     }
-
+    
+    public void simpleSplayTests () {
+        splaySimpleBB();
+        splaySimpleBS();
+        splaySimpleSS();
+        splaySimpleSB();
+    }
 
     public boolean splaySimpleBB () {
         BinarySearchTree<Integer> reference = new BinarySearchTree<>();
@@ -223,15 +223,16 @@ public class SemiSplayTreeTest extends Test {
     } 
 
     public void splayNormalTests () {
-        // splayNormal1();
-        // splayNormal2();
-        // splayNormal3();
-        // splayAdd();
-        // splayRemove1();
-        // splayRemove2();
-        // splayRemove3();
-        // splayAdvanced1();
+        splayNormal1();
+        splayNormal2();
+        splayNormal3();
+        splayAdd();
+        splayRemove1();
+        splayRemove2();
+        splayRemove3();
+        splayAdvanced1();
         removeShouldSplayFromReplacement();
+        advancedIteratorTest();
     }
 
     // Nodes underneath
@@ -325,7 +326,6 @@ public class SemiSplayTreeTest extends Test {
         
         Node refRoot = reference.root(); 
         Node treeRoot = tree.root(); 
-        System.out.println(treeRoot.treeToString());
 
         return assertTrue("splay normal add - compare tree with reference", compareTree(treeRoot, refRoot));
     }
@@ -420,7 +420,6 @@ public class SemiSplayTreeTest extends Test {
             return false;
         }
        
-        treeRoot.printTree();
         return true;
     }
 
@@ -439,26 +438,53 @@ public class SemiSplayTreeTest extends Test {
         assertTrue("Remove should splay from replacement",58 == tree.root().getValue());
         assertTrue("Remove should splay from replacement",91 == tree.root().getRight().getValue());
         assertTrue("Remove should splay from replacement",69 == tree.root().getRight().getLeft().getValue());
-
         assertTrue("Advancedddd removeeee - starting tree integrity check",85 == tree.root().getRight().getLeft().getRight().getValue());
         assertTrue("Advancedddd removeeee - starting tree integrity check",78 == tree.root().getRight().getLeft().getRight().getLeft().getValue());
         assertTrue("Advancedddd removeeee - starting tree integrity check",84 == tree.root().getRight().getLeft().getRight().getLeft().getRight().getValue());
         assertTrue("Advancedddd removeeee - starting tree integrity check",82 == tree.root().getRight().getLeft().getRight().getLeft().getRight().getLeft().getValue());
         assertTrue("Advancedddd removeeee - starting tree integrity check",tree.root().getRight().getLeft().getRight().getLeft().getRight().getLeft().getLeft() == null);
         assertTrue("Advancedddd removeeee - starting tree integrity check",tree.root().getRight().getLeft().getRight().getLeft().getRight().getLeft().getRight() == null);
-
         assertTrue("Advancedddd removeeee - remove 85", tree.remove(85));
         assertTrue("Advancedddd removeeee - integrity check after remove", 78 == tree.root().getValue());
         assertTrue("Advancedddd removeeee - integrity check after remove", 91 == tree.root().getRight().getValue());
         assertTrue("Advancedddd removeeee - integrity check after remove", 58 == tree.root().getLeft().getValue());
-
-
         assertTrue("Advancedddd removeeee - integrity check after remove", 51 == tree.root().getLeft().getLeft().getValue());
         assertTrue("Advancedddd removeeee - integrity check after remove", 69 == tree.root().getLeft().getRight().getValue());
-
         assertTrue("Advancedddd removeeee - integrity check after remove", 84 == tree.root().getRight().getLeft().getValue());
         assertTrue("Advancedddd removeeee - integrity check after remove", 96 == tree.root().getRight().getRight().getValue());
-    }
   
+        Iterator iter = tree.iterator();
+        int size = 0;
+        while (iter.hasNext()) {
+            iter.next();
+            ++size;
+        }
+        assertTrue("Advancedddd removeeee - iterator size", size == tree.size());
+
+    }
+    
+    public void advancedIteratorTest () {
+        boolean rtrn = true;
+        for (int seed = 1; seed < 10000; seed *= 10) {
+            TreeSet<Integer> oracle = new TreeSet<>();
+            Random random = new Random(seed);
+            SemiSplayTree<Integer> tree = new SemiSplayTree<>();
+            for (int i = 0; i < 1000; i++) {
+                int x = random.nextInt(100);
+                boolean add = random.nextFloat() < .9;
+                if (add) {
+                    rtrn = rtrn && oracle.add(x) == tree.add(x);
+                } 
+                else {
+                    rtrn = rtrn && oracle.remove(x) == tree.remove(x);
+                }
+                for (int j = 0; j < 100; j++) {
+                    rtrn = rtrn && oracle.contains(j) == tree.search(j);
+                }
+                rtrn = rtrn || toList(oracle) == toList(tree);
+            }
+        }
+        assertTrue("advanced iterator test", rtrn);
+    }
 
 }

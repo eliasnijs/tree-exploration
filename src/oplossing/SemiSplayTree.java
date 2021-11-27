@@ -93,8 +93,9 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public boolean search(E o) {
         if (root == null) 
             return false;
+        splaypath.clear();
         boolean found = searchHelper(o, root);
-        if (found)
+        // if (found)
             splay();
         splaypath.clear();
         return found;
@@ -128,7 +129,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public boolean addHelper(E o, Node<E> node) {
         splaypath.push(node);
         if (o.compareTo(node.getValue()) < 0) {
-            if (o == node.getValue()) System.out.println("<- left");
             if (node.getLeft() == null) {
                 node.setLeft(new Node<>(o));
                 splaypath.push(node.getLeft());

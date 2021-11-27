@@ -1,6 +1,7 @@
 package test;
 
 import opgave.Node;
+import opgave.SearchTree;
 import oplossing.SemiSplayTree;
 import oplossing.BinarySearchTree;
 
@@ -8,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.SortedSet;
+import java.util.Random;
 
 public class SemiSplayTreeTest extends Test {
 
@@ -18,7 +22,7 @@ public class SemiSplayTreeTest extends Test {
 
     public void run () {
         // basicTreeTests();
-        simpleSplayTests();
+        // simpleSplayTests();
         splayNormalTests();
     }
 
@@ -219,14 +223,15 @@ public class SemiSplayTreeTest extends Test {
     } 
 
     public void splayNormalTests () {
-        splayNormal1();
-        splayNormal2();
-        splayNormal3();
-        splayAdd();
-        splayRemove1();
-        splayRemove2();
-        splayRemove3();
-        splayAdvanced1();
+        // splayNormal1();
+        // splayNormal2();
+        // splayNormal3();
+        // splayAdd();
+        // splayRemove1();
+        // splayRemove2();
+        // splayRemove3();
+        // splayAdvanced1();
+        removeShouldSplayFromReplacement();
     }
 
     // Nodes underneath
@@ -317,9 +322,10 @@ public class SemiSplayTreeTest extends Test {
         SemiSplayTree<Integer> tree = new SemiSplayTree<>();
         tree.setRoot(construction.root());
         tree.add(7);
-       
+        
         Node refRoot = reference.root(); 
         Node treeRoot = tree.root(); 
+        System.out.println(treeRoot.treeToString());
 
         return assertTrue("splay normal add - compare tree with reference", compareTree(treeRoot, refRoot));
     }
@@ -413,8 +419,45 @@ public class SemiSplayTreeTest extends Test {
         if (!assertTrue("splay advanced 1 - add 17", compareTree(treeRoot, refRoot))) {
             return false;
         }
-        
+       
+        treeRoot.printTree();
         return true;
+    }
+
+    public void removeShouldSplayFromReplacement() {
+        SearchTree<Integer> tree = new SemiSplayTree<>();
+        SortedSet<Integer> inserted = new TreeSet<>();
+        Random rng = new Random(2021);
+        int numbers[] = new int[30];
+        for (int i = 0; i < 30; i++) {
+            int key = rng.nextInt(100);
+            tree.add(key);
+            inserted.add(key);
+            numbers[i] = key;
+        }
+
+        assertTrue("Remove should splay from replacement",58 == tree.root().getValue());
+        assertTrue("Remove should splay from replacement",91 == tree.root().getRight().getValue());
+        assertTrue("Remove should splay from replacement",69 == tree.root().getRight().getLeft().getValue());
+
+        assertTrue("Advancedddd removeeee - starting tree integrity check",85 == tree.root().getRight().getLeft().getRight().getValue());
+        assertTrue("Advancedddd removeeee - starting tree integrity check",78 == tree.root().getRight().getLeft().getRight().getLeft().getValue());
+        assertTrue("Advancedddd removeeee - starting tree integrity check",84 == tree.root().getRight().getLeft().getRight().getLeft().getRight().getValue());
+        assertTrue("Advancedddd removeeee - starting tree integrity check",82 == tree.root().getRight().getLeft().getRight().getLeft().getRight().getLeft().getValue());
+        assertTrue("Advancedddd removeeee - starting tree integrity check",tree.root().getRight().getLeft().getRight().getLeft().getRight().getLeft().getLeft() == null);
+        assertTrue("Advancedddd removeeee - starting tree integrity check",tree.root().getRight().getLeft().getRight().getLeft().getRight().getLeft().getRight() == null);
+
+        assertTrue("Advancedddd removeeee - remove 85", tree.remove(85));
+        assertTrue("Advancedddd removeeee - integrity check after remove", 78 == tree.root().getValue());
+        assertTrue("Advancedddd removeeee - integrity check after remove", 91 == tree.root().getRight().getValue());
+        assertTrue("Advancedddd removeeee - integrity check after remove", 58 == tree.root().getLeft().getValue());
+
+
+        assertTrue("Advancedddd removeeee - integrity check after remove", 51 == tree.root().getLeft().getLeft().getValue());
+        assertTrue("Advancedddd removeeee - integrity check after remove", 69 == tree.root().getLeft().getRight().getValue());
+
+        assertTrue("Advancedddd removeeee - integrity check after remove", 84 == tree.root().getRight().getLeft().getValue());
+        assertTrue("Advancedddd removeeee - integrity check after remove", 96 == tree.root().getRight().getRight().getValue());
     }
   
 

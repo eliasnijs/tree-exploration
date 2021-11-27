@@ -32,7 +32,7 @@ public class Test {
             System.out.println("\033[0;31m   FAILED\033[0m   |    " + "\033[0;31m" + name +  "\033[0m");
         }
     }
-    
+
     public boolean compareNodes (Node n1, Node n2) {
         boolean current = n1 == null && n2 == null;
         if (!current && n1 != null && n2 != null) {

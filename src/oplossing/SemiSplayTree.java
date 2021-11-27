@@ -118,20 +118,17 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             size += 1;
             return true;
         }
-        
         splaypath.clear();
         boolean b = addHelper(o, root);
-        if (b) {
-            splay();
-        }
-
-        size += b? 1 : 0;
+        splay();
+        if (b) size += 1;
         return b;
     }
 
     public boolean addHelper(E o, Node<E> node) {
         splaypath.push(node);
         if (o.compareTo(node.getValue()) < 0) {
+            if (o == node.getValue()) System.out.println("<- left");
             if (node.getLeft() == null) {
                 node.setLeft(new Node<>(o));
                 splaypath.push(node.getLeft());
@@ -269,6 +266,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         public String toString() {
             return fifo.toString();
         }
+    }
+
+    @Override
+    public String toString () {
+        return root.treeToString();
     }
 
 }

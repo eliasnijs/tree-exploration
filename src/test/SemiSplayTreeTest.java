@@ -18,8 +18,8 @@ public class SemiSplayTreeTest extends Test {
 
     public void run () {
         // basicTreeTests();
-        // simpleSplayTests();
-        // splayNormalTests();
+        simpleSplayTests();
+        splayNormalTests();
     }
 
     public void basicTreeTests () {
@@ -226,6 +226,7 @@ public class SemiSplayTreeTest extends Test {
         splayRemove1();
         splayRemove2();
         splayRemove3();
+        splayAdvanced1();
     }
 
     // Nodes underneath
@@ -249,9 +250,7 @@ public class SemiSplayTreeTest extends Test {
         Node treeRoot = tree.root(); 
         Node refRoot = reference.root(); 
 
-        assertTrue("splay normal 1 - compare tree with reference", compareTree(treeRoot, refRoot));
-
-        return true;
+        return assertTrue("splay normal 1 - compare tree with reference", compareTree(treeRoot, refRoot));
     }
     
     // Nodes above
@@ -275,9 +274,7 @@ public class SemiSplayTreeTest extends Test {
         Node treeRoot = tree.root(); 
         Node refRoot = reference.root(); 
 
-        assertTrue("splay normal 2 - compare tree with reference", compareTree(treeRoot, refRoot));
-
-        return true;
+        return assertTrue("splay normal 2 - compare tree with reference", compareTree(treeRoot, refRoot));
     }
 
     // Nodes above and underneath
@@ -301,9 +298,7 @@ public class SemiSplayTreeTest extends Test {
         Node treeRoot = tree.root(); 
         Node refRoot = reference.root(); 
 
-        assertTrue("splay normal 3 - compare tree with reference", compareTree(treeRoot, refRoot));
-
-        return true;
+        return assertTrue("splay normal 3 - compare tree with reference", compareTree(treeRoot, refRoot));
     }
 
 
@@ -326,9 +321,7 @@ public class SemiSplayTreeTest extends Test {
         Node refRoot = reference.root(); 
         Node treeRoot = tree.root(); 
 
-        assertTrue("splay normal add - compare tree with reference", compareTree(treeRoot, refRoot));
-        return true;
-
+        return assertTrue("splay normal add - compare tree with reference", compareTree(treeRoot, refRoot));
     }
 
     public boolean splayRemove1 () {
@@ -350,9 +343,7 @@ public class SemiSplayTreeTest extends Test {
         Node refRoot = reference.root(); 
         Node treeRoot = tree.root(); 
 
-        assertTrue("splay normal remove 1 - compare tree with reference", compareTree(treeRoot, refRoot));
-        return true;
-
+        return assertTrue("splay normal remove 1 - compare tree with reference", compareTree(treeRoot, refRoot));
     }
 
     public boolean splayRemove2 () {
@@ -374,33 +365,57 @@ public class SemiSplayTreeTest extends Test {
         Node refRoot = reference.root(); 
         Node treeRoot = tree.root(); 
 
-        assertTrue("splay normal remove 2 - compare tree with reference", compareTree(treeRoot, refRoot));
-        return true;
+        return assertTrue("splay normal remove 2 - compare tree with reference", compareTree(treeRoot, refRoot));
     }
 
     public boolean splayRemove3 () {
-        BinarySearchTree<Integer> reference = new BinarySearchTree<>();
-        int[] bstValues = {5, 2, 1, 3, 6, 9};
-        for (int i : bstValues) {
-            reference.add(i);
-        }
-
         BinarySearchTree<Integer> construction = new BinarySearchTree<>();
         int[] tValues = {8, 7, 4, 1, 6, 2, 3};
         for (int i : tValues) {
             construction.add(i);
         }
+
         SemiSplayTree<Integer> tree = new SemiSplayTree<>();
         tree.setRoot(construction.root());
+        
         tree.remove(4);
+        
+        BinarySearchTree<Integer> reference = new BinarySearchTree<>();
+        int[] bstValues = {7,2,1,3,6,8};
+        for (int i : bstValues) {
+            reference.add(i);
+        }
        
         Node refRoot = reference.root(); 
         Node treeRoot = tree.root(); 
+        return assertTrue("splay normal remove 3 - compare tree with reference", compareTree(treeRoot, refRoot));
+    }
+    
+    public boolean splayAdvanced1 () {
+        BinarySearchTree<Integer> construction = new BinarySearchTree<>();
+        int[] tValues = {50,1,30,25,22,20,14,13,15,17,23,32,55,61};
+        for (int i : tValues) {
+            construction.add(i);
+        }
 
-        assertTrue("splay normal remove 2 - compare tree with reference", compareTree(treeRoot, refRoot));
+        SemiSplayTree<Integer> tree = new SemiSplayTree<>();
+        tree.setRoot(construction.root());
+        
+        tree.add(18);
+       
+        int[] bstValues = {50,22,1,17,14,13,15,20,18,30,25,23,32,55,61};
+        BinarySearchTree<Integer> reference = new BinarySearchTree<>();
+        for (int i : bstValues) {
+            reference.add(i);
+        }
+        Node refRoot = reference.root(); 
+        Node treeRoot = tree.root(); 
+        if (!assertTrue("splay advanced 1 - add 17", compareTree(treeRoot, refRoot))) {
+            return false;
+        }
+        
         return true;
     }
-
-
+  
 
 }

@@ -199,7 +199,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             root = null;
         }
 
-        // splay();
+        splay();
         size--;
         return true;
     }

@@ -108,7 +108,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return true;
     }
 
-    // Add node
     @Override
     public boolean add(E o) {
         if (root == null) {
@@ -116,7 +115,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             size += 1;
             return true;
         }
-        splaypath.clear();
         boolean b = addHelper(o, root);
         splay();
         if (b) size += 1;
@@ -143,7 +141,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return false;
     }
 
-    // Remove node
     @Override
     public boolean remove(E comparable) {
         if (root == null) {
@@ -155,7 +152,8 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             return false; 
         }
 
-        Node<E> node = (comparable.compareTo(root.getValue()) == 0)?  root : (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
+        Node<E> node = (comparable.compareTo(root.getValue()) == 0)?  root : 
+            (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
         
         int nodeIsSmaller = comparable.compareTo(parent.getValue());
         if (node.getLeft() != null && node.getRight() == null) {

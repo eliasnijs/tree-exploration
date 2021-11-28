@@ -9,7 +9,8 @@ import java.util.List;
 
 public class MyTreeTest extends Test {
 
-    MyTreeTest () {
+    MyTreeTest (boolean printPriority) {
+        super(printPriority);
         System.out.println("\n > MYTREE TESTS\n");
         printStatusHeader();
     }
@@ -29,7 +30,7 @@ public class MyTreeTest extends Test {
     
     public void compileTest () {
         OptimalTree<Integer> t = new OptimalTree<>();
-        assertFalse("compile test", t == null);
+        assertTrue("compile test", t != null);
     }
 
     public void addTest1 () {
@@ -62,13 +63,13 @@ public class MyTreeTest extends Test {
             t.add(v);
         }
         t.remove(6);
-        assertFalse("remove-test 1 - node 6", t.search(6));
+        assertTrue("remove-test 1 - node 6", !t.search(6));
         t.remove(1);
-        assertFalse("remove-test 1 - node 1", t.search(1));
+        assertTrue("remove-test 1 - node 1", !t.search(1));
         t.remove(2);
-        assertFalse("remove-test 1 - node 2", t.search(2));
+        assertTrue("remove-test 1 - node 2", !t.search(2));
         t.remove(5);
-        assertFalse("remove-test 1 - node 5", t.search(5));
+        assertTrue("remove-test 1 - node 5", !t.search(5));
     }
 
     public void removeTest2 () {
@@ -104,7 +105,7 @@ public class MyTreeTest extends Test {
         // System.out.println(t.root().getValue() + " " + t.iterator() + " " + 2);
         t.remove(2);
         // System.out.println(t.root().getValue() + " " + t.iterator() + " " + 2);
-        assertFalse("remove-test 3 - node 2", t.search(2));
+        assertTrue("remove-test 3 - node 2", t.search(2));
     }
 
     public void iteratorTest () {

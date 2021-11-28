@@ -15,7 +15,8 @@ import java.util.Random;
 
 public class SemiSplayTreeTest extends Test {
 
-    SemiSplayTreeTest () {
+    SemiSplayTreeTest (boolean printPriority) {
+        super(printPriority);
         System.out.println("\n > SEMISPLAY TESTS\n");
         printStatusHeader();
     }
@@ -40,7 +41,7 @@ public class SemiSplayTreeTest extends Test {
    
     public void compileTest () {
         SemiSplayTree<Integer> t = new SemiSplayTree<>();
-        assertFalse("compile test", t == null);
+        assertTrue("compile test", t != null);
     }
 
     public void addTest1 () {
@@ -75,13 +76,13 @@ public class SemiSplayTreeTest extends Test {
             t.add(v);
         }
         t.remove(6);
-        assertFalse("remove-test 1 - node 6", t.search(6));
+        assertTrue("remove-test 1 - node 6", !t.search(6));
         t.remove(1);
-        assertFalse("remove-test 1 - node 1", t.search(1));
+        assertTrue("remove-test 1 - node 1", !t.search(1));
         t.remove(2);
-        assertFalse("remove-test 1 - node 2", t.search(2));
+        assertTrue("remove-test 1 - node 2", !t.search(2));
         t.remove(5);
-        assertFalse("remove-test 1 - node 5", t.search(5));
+        assertTrue("remove-test 1 - node 5", !t.search(5));
     }
 
     public void removeTest2 () {
@@ -99,8 +100,8 @@ public class SemiSplayTreeTest extends Test {
             for (int v : l) {
                 st.remove(v);
                 if (st.search(v)) {
-                    // System.out.println("   > Test failed at current node, quitting test! node: " + v + " root: " + st.root() + " list: " + l);
-                    assertFalse("remove-test 2 - all nodes", true);
+                    System.out.println("   > Test failed at current node, quitting test! node: " + v + " root: " + st.root() + " list: " + l);
+                    assertTrue("remove-test 2 - all nodes", false);
                     return;
                 }
             }
@@ -115,7 +116,7 @@ public class SemiSplayTreeTest extends Test {
             t.add(v);
         }
         t.remove(2);
-        assertFalse("remove-test 3 - node 2", t.search(2));
+        assertTrue("remove-test 3 - node 2", !t.search(2));
     }
 
     public void iteratorTest () {
@@ -419,7 +420,7 @@ public class SemiSplayTreeTest extends Test {
         if (!assertTrue("splay advanced 1 - add 17", compareTree(treeRoot, refRoot))) {
             return false;
         }
-        printTree(treeRoot);
+        // printTree(treeRoot);
        
         return true;
     }

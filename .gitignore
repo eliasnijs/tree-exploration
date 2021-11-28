@@ -41,3 +41,5 @@ out/*
 build/
 report/
 *.args
+src/test/pushtests/
+

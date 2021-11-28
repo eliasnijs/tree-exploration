@@ -15,8 +15,11 @@ import java.util.Random;
  * 4. Benchmark using the samples
  */
 public class Sampler {
+    /** Source of uniform randomness */
     protected final Random rng;
+    /** Number of elements to sample from */
     protected int numberOfElements;
+    /** Elements to sample from */
     protected List<Integer> elements;
 
     public Sampler(Random rng, int numberOfElements) {
@@ -32,10 +35,22 @@ public class Sampler {
         Collections.shuffle(this.elements, rng);
     }
 
+    /**
+     * Internal method which should return the index of the sample
+     *
+     * @return an integer with a probability according to the distribution.
+     */
     protected int sample() {
         return rng.nextInt(this.numberOfElements);
     }
 
+    /**
+     * Creates a list of samples by sampling the elements in this class
+     * according to the distribution represented by this class.
+     *
+     * @param numSamples how many samples should be taken
+     * @return a list of the given length with samples
+     */
     public List<Integer> sample(int numSamples) {
         List<Integer> shuffled = new ArrayList<>(this.elements);
         Collections.shuffle(shuffled, rng);
@@ -46,6 +61,9 @@ public class Sampler {
         return samples;
     }
 
+    /**
+     * @return the list of elements to sample from
+     */
     public List<Integer> getElements() {
         return elements;
     }

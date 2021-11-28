@@ -181,9 +181,6 @@ public class ZipfSampler extends Sampler {
      *  <li>{@code log(x)}, if {@code exponent == 1}</li>
      * </ul>
      * H(x) is an integral function of h(x), the derivative of H(x) is h(x).
-     *
-     * @param x Free parameter.
-     * @return {@code H(x)}.
      */
     private double hIntegral(final double x) {
         final double logX = Math.log(x);
@@ -192,9 +189,6 @@ public class ZipfSampler extends Sampler {
 
     /**
      * {@code h(x) = 1 / x^exponent}.
-     *
-     * @param x Free parameter.
-     * @return {@code h(x)}.
      */
     private double h(final double x) {
         return Math.exp(-exponent * Math.log(x));
@@ -202,9 +196,6 @@ public class ZipfSampler extends Sampler {
 
     /**
      * The inverse function of {@code H(x)}.
-     *
-     * @param x Free parameter
-     * @return y for which {@code H(y) = x}.
      */
     private double hIntegralInverse(final double x) {
         double t = x * (1 - exponent);
@@ -221,9 +212,6 @@ public class ZipfSampler extends Sampler {
      * <p>
      * A Taylor series expansion is used, if x is close to 0.
      * </p>
-     *
-     * @param x A value larger than or equal to -1.
-     * @return {@code log(1 + x) / x}.
      */
     private static double helper1(final double x) {
         if (Math.abs(x) > TAYLOR_THRESHOLD) {
@@ -238,9 +226,6 @@ public class ZipfSampler extends Sampler {
      * <p>
      * A Taylor series expansion is used, if x is close to 0.
      * </p>
-     *
-     * @param x Free parameter.
-     * @return {@code (exp(x) - 1) / x} if x is non-zero, or 1 if x = 0.
      */
     private static double helper2(final double x) {
         if (Math.abs(x) > TAYLOR_THRESHOLD) {

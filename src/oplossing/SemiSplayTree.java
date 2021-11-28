@@ -24,6 +24,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     public void splay () {
         if (splaypath.size() < 3) {
+            splaypath.clear();
             return;
         }
         while (splaypath.size() > 2) {
@@ -76,29 +77,25 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         splaypath.clear();
     }
 
-    // Get root of tree
     @Override
     public Node<E> root() {
         return root;
     }
 
-    // Get size of tree
     @Override
     public int size() {
         return size;
     }
 
-    // Search node
     @Override
     public boolean search(E o) {
-        if (root == null) 
+        if (root == null) {
             return false;
+        }
         splaypath.clear();
-        boolean found = searchHelper(o, root);
-        // if (found)
-            splay();
-        splaypath.clear();
-        return found;
+        boolean b = searchHelper(o, root);
+        splay();
+        return b;
     }
 
     public boolean searchHelper (E o, Node<E> node) {
@@ -149,17 +146,17 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     // Remove node
     @Override
     public boolean remove(E comparable) {
-        if (root == null) 
+        if (root == null) {
             return false; 
+        }
        
-        splaypath.clear();
         Node<E> parent = removeFindParentNode(comparable, root, root);
-        if (parent == null)
+        if (parent == null) {
             return false; 
+        }
 
-        Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
-        node = (comparable.compareTo(root.getValue()) == 0)? root : node;
-
+        Node<E> node = (comparable.compareTo(root.getValue()) == 0)?  root : (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
+        
         int nodeIsSmaller = comparable.compareTo(parent.getValue());
         if (node.getLeft() != null && node.getRight() == null) {
             if (nodeIsSmaller < 0) {
@@ -220,7 +217,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return parent;
     }
 
-    // Iterator
     @Override
     public Iterator<E> iterator() {
         return new Iter(root);
@@ -266,11 +262,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         public String toString() {
             return fifo.toString();
         }
-    }
-
-    @Override
-    public String toString () {
-        return root.treeToString();
     }
 
 }

@@ -415,10 +415,11 @@ public class SemiSplayTreeTest extends Test {
             reference.add(i);
         }
         Node refRoot = reference.root(); 
-        Node treeRoot = tree.root(); 
+        Node treeRoot = tree.root();
         if (!assertTrue("splay advanced 1 - add 17", compareTree(treeRoot, refRoot))) {
             return false;
         }
+        printTree(treeRoot);
        
         return true;
     }

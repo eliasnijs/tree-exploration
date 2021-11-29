@@ -31,9 +31,6 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
     private class DataEntry {
         public E key;
         public Double weight;
-        public String toString() {
-            return "{" + key + " : " + weight + "}" ;
-        }
     }
 
     @Override
@@ -51,7 +48,6 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
             e.weight = weights.get(i);
             data.offer(e);
         }
-        System.out.println(data);
         while (data.size() > 0) {
             double weight = data.peek().weight;
             ArrayList<E> tbpKeys = new ArrayList<>();
@@ -72,61 +68,55 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         placekey(keys,m+(l-m)/2,l/2);
     }
 
+    private static class WeightDataExternal {
+        public double weight;
+        public double cost;
+        public int rootindex;
+    }
+
     @Override
     public void optimize(List<E> keys, List<Double> internalWeights, List<Double> externalWeights) {
         root = null;
-        placeKey(makeDataTable(keys, internalWeights, externalWeights), keys, 0, externalWeights.size()-1);
-    }
-
-    private static class ProbabilityData {
-        public double weight;
-        public double cost;
-        public int    rooti;
-        public String toString () {
-            return "{" + weight + ", " + cost + ", " + rooti + "}";
-        }
-    }
-
-    public void placeKey(ProbabilityData table[][], List<E> keys, int b, int e) {
-        if (b >= e) {
-            return;
-        }
-        int i = table[e-b][b].rooti;
-        this.add(keys.get(i-1));
-        placeKey(table, keys, 0, i-1);
-        placeKey(table, keys, i, e);
-    }
-
-    public ProbabilityData[][] makeDataTable (List<E> k, List<Double> p, List<Double> q) {
-        int twidth = q.size();
-        ProbabilityData table[][] = new ProbabilityData[twidth][twidth];
+        int twidth = externalWeights.size();
+        WeightDataExternal table[][] = new WeightDataExternal[twidth][twidth];
         for (int i=0; i<twidth; ++i) {
-            ProbabilityData pd = new ProbabilityData();
-            pd.weight = q.get(i); 
+            WeightDataExternal pd = new WeightDataExternal();
+            pd.weight = externalWeights.get(i); 
             pd.cost   = 0;
-            pd.rooti  = 0;
+            pd.rootindex  = 0;
             
             table[0][i] = pd;
         } 
+        // TODO (Elias): Do some more research on this solution/algorithm
         for (int r=1; r<twidth; ++r) {
             for (int c=0; c<twidth-r; ++c) {
-                int i=c; int j=c+r;
-                ProbabilityData pd = new ProbabilityData();
-                pd.weight = table[r-1][c].weight + p.get(j-1) + q.get(j);
+                int j=c+r;
+                WeightDataExternal pd = new WeightDataExternal();
+                pd.weight = table[r-1][c].weight + internalWeights.get(j-1) + externalWeights.get(j);
                 pd.cost = Double.MAX_VALUE;
-                pd.rooti = 0; 
-                for (int s=i+1; s<=j; ++s) {
-                    double t = table[s-i-1][i].cost + table[j-s][s].cost;
+                pd.rootindex = 0; 
+                for (int s = c +1; s<=j; ++s) {
+                    double t = table[s- c -1][c].cost + table[j-s][s].cost;
                     if (t <= pd.cost) {
                         pd.cost = t;
-                        pd.rooti = s;
+                        pd.rootindex = s;
                     }
                 }
                 pd.cost += pd.weight;
                 table[r][c] = pd;
             }
         }
-        return table;
+        placeKey(table, keys, 0, externalWeights.size()-1);
+    }
+
+    public void placeKey(WeightDataExternal table[][], List<E> keys, int b, int e) {
+        if (b >= e) {
+            return;
+        }
+        int i = table[e-b][b].rootindex;
+        this.add(keys.get(i-1));
+        placeKey(table, keys, 0, i-1);
+        placeKey(table, keys, i, e);
     }
 
     @Override

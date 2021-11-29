@@ -2,6 +2,7 @@ package oplossing;
 
 import opgave.Node;
 import opgave.SearchTree;
+import test.Test;
 
 import java.util.*;
 
@@ -58,7 +59,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                     splaypath.push(next);
                 } 
             }
-
             if (splaypath.size() == 1) {
                 root = splaypath.pop();        
                 break;

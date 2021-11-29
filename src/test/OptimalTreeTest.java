@@ -17,7 +17,39 @@ public class OptimalTreeTest extends Test {
     }
 
     public void run () {
-        givenTests();
+        givenTestsWithExternal();
+    }
+    
+    public double treeWeight(SearchTree<Integer> tree, List<Integer> keys, List<Double> internal, List<Double> external) {
+        if (external == null) {
+            external = new ArrayList<>();
+            for (int i = 0; i < keys.size() + 1; i++) {
+                external.add(0d);
+            }
+        }
+        return nodeWeight(tree.root(), keys, internal, external, 1);
+    }
+
+    public double nodeWeight(Node<Integer> node, List<Integer> keys, List<Double> internal, List<Double> external, int depth) {
+        int v = node.getValue();
+        int i = keys.indexOf(v);
+        assert i >= 0;
+
+        // multiply the weight of the key with the current depth
+        double w = depth * internal.get(i);
+
+        if (node.getLeft() == null) {
+            // we count the visited "nodes" as weight, including the NULL pointer
+            w += (depth + 1) * external.get(i);
+        } else {
+            w += nodeWeight(node.getLeft(), keys, internal, external, depth + 1);
+        }
+        if (node.getRight() == null) {
+            w += (depth + 1) * external.get(i + 1);
+        } else {
+            w += nodeWeight(node.getRight(), keys, internal, external, depth + 1);
+        }
+        return w;
     }
 
     public void basicTreeTest () {
@@ -119,12 +151,12 @@ public class OptimalTreeTest extends Test {
         iter.next();
     }
    
-    public void givenTests () {
+    public void givenTestsWithoutExternal () {
         shouldThrowAwayExisting();
         singleItem();
-        // singleItemWithExternal();
         twoDescending();
         twoAscending();
+        sevenEqual();
     }
 
     public void shouldThrowAwayExisting() {
@@ -151,27 +183,11 @@ public class OptimalTreeTest extends Test {
         assertTrue("Single Item", 1d == treeWeight(tree, keys, weights, null));
     }
 
-    public void singleItemWithExternal() {
-        OptimizableTree<Integer> tree = new OptimalTree<>();
-        List<Integer> keys = List.of(1);
-        List<Double> weights = List.of(1d);
-        List<Double> external = List.of(1d, 1d);
-        tree.optimize(keys, weights, external);
-        assertTrue("single item with external", 1 == tree.root().getValue());
-        assertTrue("single item with external", null == tree.root().getLeft());
-        assertTrue("single item with external", null == tree.root().getRight());
-
-        assertTrue("single item with external", 5d == treeWeight(tree, keys, weights, external));
-    }
-
     void twoDescending() {
         OptimizableTree<Integer> tree = new OptimalTree<>();
-
         List<Integer> keys = List.of(1, 2);
         List<Double> weights = List.of(1d, 2d);
-
         tree.optimize(keys, weights);
-        printTree(tree.root());
         assertTrue("2 descending", 2 == tree.root().getValue());
         assertTrue("2 descending", 1 == tree.root().getLeft().getValue());
         assertTrue("2 descending", 4d == treeWeight(tree, keys, weights, null));
@@ -190,40 +206,148 @@ public class OptimalTreeTest extends Test {
         assertTrue("2 ascending", 4d == treeWeight(tree, keys, weights, null));
     }
     
-    /**
-     * Calculates the weight of a tree given the list of keys, internal and external weights.
-     */
-    public double treeWeight(SearchTree<Integer> tree, List<Integer> keys, List<Double> internal, List<Double> external) {
-        if (external == null) {
-            external = new ArrayList<>();
-            for (int i = 0; i < keys.size() + 1; i++) {
-                external.add(0d);
-            }
-        }
-        return nodeWeight(tree.root(), keys, internal, external, 1);
+    void sevenEqual() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+
+        List<Integer> keys = List.of(1, 2, 3, 4, 5, 6, 7);
+        List<Double> weights = List.of(1d, 1d, 1d, 1d, 1d, 1d, 1d);
+
+        tree.optimize(keys, weights);
+        assertTrue("seven equal", 4 == tree.root().getValue());
+
+        assertTrue("seven equal", 2 == tree.root().getLeft().getValue());
+        assertTrue("seven equal", 1 == tree.root().getLeft().getLeft().getValue());
+        assertTrue("seven equal", 3 == tree.root().getLeft().getRight().getValue());
+
+
+        assertTrue("seven equal", 6 == tree.root().getRight().getValue());
+        assertTrue("seven equal", 5 == tree.root().getRight().getLeft().getValue());
+        assertTrue("seven equal", 7 == tree.root().getRight().getRight().getValue());
+
+        assertTrue("seven equal", 17d == treeWeight(tree, keys, weights, null));
+    }
+    
+    public void givenTestsWithExternal () {
+        sevenEqualWithExternal();
+        singleItemWithExternal();
+        descendingExternal();
+        ascendingExternal();
+        zigzagExternal();
+        exampleWithExternal();
+        simpleWithExternal();
     }
 
-    public double nodeWeight(Node<Integer> node, List<Integer> keys, List<Double> internal, List<Double> external, int depth) {
+    public void singleItemWithExternal() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+        List<Integer> keys = List.of(1);
+        List<Double> weights = List.of(1d);
+        List<Double> external = List.of(1d, 1d);
+        tree.optimize(keys, weights, external);
+        assertTrue("single item with external", 1 == tree.root().getValue());
+        assertTrue("single item with external", null == tree.root().getLeft());
+        assertTrue("single item with external", null == tree.root().getRight());
 
-        int v = node.getValue();
-        int i = keys.indexOf(v);
-        assert i >= 0;
+        assertTrue("single item with external", 5d == treeWeight(tree, keys, weights, external));
+    }
+    
+    public void sevenEqualWithExternal() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
 
-        // multiply the weight of the key with the current depth
-        double w = depth * internal.get(i);
+        List<Integer> keys = List.of(1, 2, 3, 4, 5, 6, 7);
+        List<Double> weights = List.of(1d, 1d, 1d, 1d, 1d, 1d, 1d);
+        List<Double> external = List.of(1d, 1d, 1d, 1d, 1d, 1d, 1d, 1d);
 
-        if (node.getLeft() == null) {
-            // we count the visited "nodes" as weight, including the NULL pointer
-            w += (depth + 1) * external.get(i);
-        } else {
-            w += nodeWeight(node.getLeft(), keys, internal, external, depth + 1);
-        }
-        if (node.getRight() == null) {
-            w += (depth + 1) * external.get(i + 1);
-        } else {
-            w += nodeWeight(node.getRight(), keys, internal, external, depth + 1);
-        }
-        return w;
+        tree.optimize(keys, weights, external);
+        assertTrue("seven equal external", 4 == tree.root().getValue());
+
+        assertTrue("seven equal external", 2 == tree.root().getLeft().getValue());
+        assertTrue("seven equal external", 1 == tree.root().getLeft().getLeft().getValue());
+        assertTrue("seven equal external", 3 == tree.root().getLeft().getRight().getValue());
+
+
+        assertTrue("seven equal external", 6 == tree.root().getRight().getValue());
+        assertTrue("seven equal external", 5 == tree.root().getRight().getLeft().getValue());
+        assertTrue("seven equal external", 7 == tree.root().getRight().getRight().getValue());
+       
+        assertTrue("seven equal external", 49d == treeWeight(tree, keys, weights, external));
+    }
+    
+    public void descendingExternal() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+
+        List<Integer> keys = List.of(1, 2, 3);
+        List<Double> weights = List.of(3d, 2d, 1d);
+        List<Double> external = List.of(4d, 3d, 2d, 2d);
+
+        tree.optimize(keys, weights, external);
+        printTree(tree.root());
+        assertTrue("descending external", 1 == tree.root().getValue());
+        assertTrue("descending external", null == tree.root().getLeft());
+        assertTrue("descending external", 2 == tree.root().getRight().getValue());
+        assertTrue("descending external", null == tree.root().getRight().getLeft());
+        // assertTrue("descending external", 3 == tree.root().getRight().getRight().getValue());
+
+        assertTrue("descending external", 43d == treeWeight(tree, keys, weights, external));
+    }
+    
+    public void ascendingExternal() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+
+        List<Integer> keys = List.of(1, 2, 3);
+        List<Double> weights = List.of(2d, 8d, 50d);
+        List<Double> external = List.of(1d, 1d, 4d, 21d);
+
+        tree.optimize(keys, weights, external);
+        assertTrue("ascending external", 134 == treeWeight(tree, keys, weights, external));
+
+        assertTrue("ascending external", 3 == tree.root().getValue());
+        assertTrue("ascending external", null == tree.root().getRight());
+        assertTrue("ascending external", 2 == tree.root().getLeft().getValue());
+        assertTrue("ascending external", null == tree.root().getLeft().getRight());
+        assertTrue("ascending external", 1 == tree.root().getLeft().getLeft().getValue());
+
+        assertTrue("ascending external", 134d == treeWeight(tree, keys, weights, external));
+    }
+    
+    public void zigzagExternal() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+
+        List<Integer> keys = List.of(1, 2, 3);
+        List<Double> weights = List.of(1d, 1d, 1d);
+        List<Double> external = List.of(5d, 1d, 1d, 4d);
+
+        tree.optimize(keys, weights, external);
+        assertTrue("zigzag external", 36 == treeWeight(tree, keys, weights, external));
+
+        assertTrue("zigzag external", 1 == tree.root().getValue());
+        assertTrue("zigzag external", null == tree.root().getLeft());
+        assertTrue("zigzag external", 3 == tree.root().getRight().getValue());
+        assertTrue("zigzag external", null == tree.root().getRight().getRight());
+        assertTrue("zigzag external", 2 == tree.root().getRight().getLeft().getValue());
+
+        assertTrue("zigzag external", 36d == treeWeight(tree, keys, weights, external));
+    }
+
+    public void exampleWithExternal() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+
+        List<Integer> keys = List.of(0, 1, 2, 3, 4, 5);
+        List<Double> internal = List.of(77.0, 90.0, 88.0, 85.0, 13.0, 78.0);
+        List<Double> external = List.of(38.0, 78.0, 55.0, 56.0, 75.0, 59.0, 17.0);
+        
+        tree.optimize(keys, internal, external);
+        printTree(tree.root());
+        assertTrue("example with external", 2450.0 == treeWeight(tree, keys, internal, external));
+    }
+    
+    public void simpleWithExternal() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+
+        List<Integer> keys = List.of(10,20,30,40);
+        List<Double> internal = List.of(3.0,3.0,1.0,1.0);
+        List<Double> external = List.of(2.0,3.0,1.0,1.0,1.0);
+        tree.optimize(keys, internal, external);
+        printTree(tree.root());
     }
 
 }

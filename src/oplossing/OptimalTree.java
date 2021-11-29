@@ -30,7 +30,10 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
 
     private class DataEntry {
         public E key;
-        public Double wheight;
+        public Double weight;
+        public String toString() {
+            return "{" + key + " : " + weight + "}" ;
+        }
     }
 
     @Override
@@ -39,27 +42,28 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         }
         root = null;
         PriorityQueue<DataEntry> data = new PriorityQueue<>((e1,e2) -> {
-            int t = e2.wheight.compareTo(e1.wheight);
-            return (t != 0)? t : e1.key.compareTo(e2.key);
+            int r = e2.weight.compareTo(e1.weight);
+            return (r != 0)? r : e1.key.compareTo(e2.key);
         });
         for (int i=0; i < keys.size(); ++i) {
             DataEntry e = new DataEntry();
             e.key = keys.get(i);
-            e.wheight = weights.get(i);
+            e.weight = weights.get(i);
             data.offer(e);
         }
+        System.out.println(data);
         while (data.size() > 0) {
-            double wheight = data.peek().wheight;
+            double weight = data.peek().weight;
             ArrayList<E> tbpKeys = new ArrayList<>();
             while (data.size() > 0) {
-                if (data.peek().wheight != wheight) { break;
+                if (data.peek().weight != weight) { break;
                 } 
                 tbpKeys.add(data.poll().key);
             } 
             placekey(tbpKeys, (tbpKeys.size()-1)/2, tbpKeys.size());
         } 
     }
-
+    
     public void placekey (ArrayList<E> keys, int m, int l) {
         if (l == 0) { return;
         }
@@ -67,37 +71,64 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         placekey(keys,m-(l-m)/2,l/2);
         placekey(keys,m+(l-m)/2,l/2);
     }
-    
-    /**
-     * Rebuild the tree to be optimal for a list of keys, their weights, and
-     * weights of keys not in the tree.
-     *
-     * This extends the method above with weights of unsuccessful searches.
-     *
-     * Rebuilds the current tree optimized according to the given weights:
-     * Given a list of sorted keys and a list of internal weights such that for
-     * every index <tt>i</tt> between 0 and <tt>keys.size()</tt>, the key at
-     * <tt>keys.get(i)</tt> has a weight of <tt>internalWeights.get(i)</tt>, and
-     * a list of external weights such that <tt>externalWeights.get(i)</tt> is
-     * the weight of all unsuccessful searches for keys between
-     * <tt>keys.get(i - 1)</tt> and <tt>keys.get(i)</tt>. The weight at
-     * <tt>externalWeights.get(0)</tt> is the weight of all searches for keys
-     * smaller than those in <tt>keys</tt>, the weight at
-     * <tt>externalWeights.get(keys.size())</tt> is the weight of all searches
-     * for keys greater then those in keys.
-     *
-     * The weights represent the probability of that value being searched.
-     * The given weights should be strictly positive, but should not necessarily
-     * be normalized (the sum of the weights might be different than 1). Thus
-     * actual search counts may be passed as weights.
-     */
- 
 
     @Override
     public void optimize(List<E> keys, List<Double> internalWeights, List<Double> externalWeights) {
-
+        root = null;
+        placeKey(makeDataTable(keys, internalWeights, externalWeights), keys, 0, externalWeights.size()-1);
     }
-    
+
+    private static class ProbabilityData {
+        public double weight;
+        public double cost;
+        public int    rooti;
+        public String toString () {
+            return "{" + weight + ", " + cost + ", " + rooti + "}";
+        }
+    }
+
+    public void placeKey(ProbabilityData table[][], List<E> keys, int b, int e) {
+        if (b >= e) {
+            return;
+        }
+        int i = table[e-b][b].rooti;
+        this.add(keys.get(i-1));
+        placeKey(table, keys, 0, i-1);
+        placeKey(table, keys, i, e);
+    }
+
+    public ProbabilityData[][] makeDataTable (List<E> k, List<Double> p, List<Double> q) {
+        int twidth = q.size();
+        ProbabilityData table[][] = new ProbabilityData[twidth][twidth];
+        for (int i=0; i<twidth; ++i) {
+            ProbabilityData pd = new ProbabilityData();
+            pd.weight = q.get(i); 
+            pd.cost   = 0;
+            pd.rooti  = 0;
+            
+            table[0][i] = pd;
+        } 
+        for (int r=1; r<twidth; ++r) {
+            for (int c=0; c<twidth-r; ++c) {
+                int i=c; int j=c+r;
+                ProbabilityData pd = new ProbabilityData();
+                pd.weight = table[r-1][c].weight + p.get(j-1) + q.get(j);
+                pd.cost = Double.MAX_VALUE;
+                pd.rooti = 0; 
+                for (int s=i+1; s<=j; ++s) {
+                    double t = table[s-i-1][i].cost + table[j-s][s].cost;
+                    if (t <= pd.cost) {
+                        pd.cost = t;
+                        pd.rooti = s;
+                    }
+                }
+                pd.cost += pd.weight;
+                table[r][c] = pd;
+            }
+        }
+        return table;
+    }
+
     @Override
     public Node<E> root() {
         return root;

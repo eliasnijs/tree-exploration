@@ -54,6 +54,9 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         public double weight;
         public double cost;
         public int rootindex;
+        public String toString () {
+            return "{" + rootindex + ", " + weight + ", " + cost + "}";
+        }
     }
 
     @Override
@@ -75,10 +78,10 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
                 WeightDataExternal pd = new WeightDataExternal();
                 pd.weight = table[r-1][c].weight + internalWeights.get(j-1) + externalWeights.get(j);
                 pd.cost = Double.MAX_VALUE;
-                pd.rootindex = 0; 
+                pd.rootindex = 0;
                 for (int s = c +1; s<=j; ++s) {
-                    double t = table[s- c -1][c].cost + table[j-s][s].cost;
-                    if (t <= pd.cost) {
+                    double t = table[s-c-1][c].cost + table[j-s][s].cost;
+                    if (t < pd.cost) {
                         pd.cost = t;
                         pd.rootindex = s;
                     }
@@ -87,16 +90,23 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
                 table[r][c] = pd;
             }
         }
+        for (int i = 0; i < twidth; ++i) {
+            for (int j = 0; j < twidth; ++j) {
+                System.out.print(j + ":" + (i + j) + " " + table[i][j] + "\t");
+            } System.out.println();
+        }
         placeKeys(table, keys, 0, externalWeights.size()-1);
     }
 
     public void placeKeys (WeightDataExternal table[][], List<E> keys, int b, int e) {
-        if (b >= e) { 
+        if (b >= e) {
             return; 
         }
+        System.out.println(b + ", " + e);
         int i = table[e-b][b].rootindex;
+        System.out.println(i-1);
         this.add(keys.get(i-1));
-        placeKeys(table, keys, 0, i-1);
+        placeKeys(table, keys, 1, i-1);
         placeKeys(table, keys, i, e);
     }
 

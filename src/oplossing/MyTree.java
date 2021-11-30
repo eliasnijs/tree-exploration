@@ -15,19 +15,16 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
         size = 0;
     }
 
-    // Get root of tree
     @Override
     public Node<E> root() {
         return root;
     }
 
-    // Get size of tree
     @Override
     public int size() {
         return size;
     }
 
-    // Search Node
     @Override
     public boolean search(E o) {
         return root != null && searchHelper(o, root);
@@ -42,7 +39,6 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
         return true;
     }
 
-    // Add node
     @Override
     public boolean add(E o) {
         if (root == null) {
@@ -72,57 +68,63 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
         return false;
     }
 
-    // Remove node
     @Override
     public boolean remove(E comparable) {
-        if (root == null) 
+        if (root == null) {
             return false; 
-        
+        }
+       
         Node<E> parent = removeFindParentNode(comparable, root, root);
-        if (parent == null)
+        if (parent == null) {
             return false; 
+        }
 
-        Node<E> node = (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
-        node = (comparable.compareTo(root.getValue()) == 0)? root : node;
-
-        if (node.getLeft() != null) {
+        Node<E> node = (comparable.compareTo(root.getValue()) == 0)?  root : 
+            (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
+        
+        int nodeIsSmaller = comparable.compareTo(parent.getValue());
+        if (node.getLeft() != null && node.getRight() == null) {
+            if (nodeIsSmaller < 0) {
+                parent.setLeft(node.getLeft());
+            } else if (nodeIsSmaller > 0) {
+                parent.setRight(node.getLeft());
+            } else {
+                root = node.getLeft();
+            }
+        } else if (node.getLeft() == null && node.getRight() != null) {
+            if (nodeIsSmaller < 0) {
+                parent.setLeft(node.getRight());
+            } else if (nodeIsSmaller > 0) {
+                parent.setRight(node.getRight());
+            } else {
+                root = node.getRight();
+            }
+        } else if (node.getLeft() != null) {
             Node<E> nParent = node.getLeft();
             if (nParent.getRight() != null) {
                 nParent = removeFindRightParent(node, nParent);
                 node.setValue(nParent.getRight().getValue());
                 nParent.setRight(nParent.getRight().getLeft());
+            } else {
+                node.setValue(nParent.getValue());
+                node.setLeft(nParent.getLeft()); 
             }
-            node.setValue(nParent.getValue());
-            node.setLeft(nParent.getLeft());
-        } else if (node.getRight() != null) {
-            Node<E> nParent = node.getRight();
-            if (nParent.getLeft() != null) {
-                nParent = removeFindLeftParent(node, nParent);
-                node.setValue(nParent.getLeft().getValue());
-                nParent.setLeft(nParent.getLeft().getRight());
-            }
-            node.setValue(nParent.getValue());
-            node.setRight(nParent.getRight());
-        } else if (comparable.compareTo(parent.getValue()) < 0) {
+        } else if (nodeIsSmaller < 0) {
             parent.setLeft(null);
-        } else if (comparable.compareTo(parent.getValue()) > 0) {
+        } else if (nodeIsSmaller > 0) {
             parent.setRight(null);
         } else {
             root = null;
         }
 
-       size--;
-       return true;
+        size--;
+        return true;
     }
 
     public Node<E> removeFindRightParent (Node<E> parent, Node<E> node) {
-        return (node.getRight() == null)? parent : removeFindRightParent(node, node.getRight());
+        return (node.getRight() != null)? removeFindRightParent(node, node.getRight()) : parent;
     }
-
-    public Node<E> removeFindLeftParent (Node<E> parent, Node<E> node) {
-        return (node.getLeft() == null)? parent : removeFindLeftParent(node, node.getLeft());
-    }
-
+    
     public Node<E> removeFindParentNode (E o, Node<E> parent, Node<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
             return (node.getLeft() != null)? removeFindParentNode(o, node, node.getLeft()) : null;
@@ -132,7 +134,6 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
         return parent;
     }
 
-    // Iterator
     @Override
     public Iterator<E> iterator() {
         return new Iter(root);

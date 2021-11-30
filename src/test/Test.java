@@ -2,13 +2,36 @@ package test;
 
 import opgave.Node;
 import java.util.*;
+import java.util.Map;
 
 public class Test {
 
     private boolean printPriority;
 
     public Test (boolean printPriority) {
-        this.printPriority = printPriority; 
+        this.printPriority = printPriority;
+    }
+
+    public void runTests (Map<String, Runnable> tests) {
+        HashMap<String, Long> benchmarks = new HashMap<>();
+        for (Map.Entry<String, Runnable> entry : tests.entrySet()) {
+            System.out.println(" > " + entry.getKey());
+            long stt = System.nanoTime();
+            entry.getValue().run();
+            long ett = System.nanoTime();
+            benchmarks.put(entry.getKey(), (ett-stt));
+        }
+        // Print table
+        long totaltime = 0;
+        System.out.println();
+        System.out.println(" > Benchmarks");
+        System.out.println("    Time(ns)           |   Name");
+        System.out.println(" --------------------- | -----------------------------------------");
+        for (Map.Entry<String, Long> entry : benchmarks.entrySet()) {
+            System.out.println(String.format("    %-18d |   %s ", entry.getValue(), entry.getKey()));
+            totaltime += entry.getValue();
+        }
+        System.out.println("  Total time:  " + totaltime + "ns\n");
     }
     
     public boolean assertTrue (String name, boolean p1) {

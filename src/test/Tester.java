@@ -63,18 +63,15 @@ public class Tester {
   }
 
   private void testSemisplayTree () {
-    SemiSplayTreeTest t = new SemiSplayTreeTest(printPriority);
-    t.run();
+    new SemiSplayTreeTest(printPriority);
   }
 
   private void testOptimalTree () {
-    OptimalTreeTest t = new OptimalTreeTest(printPriority);
-    t.run();
+    new OptimalTreeTest(printPriority);
   }
 
   private void testMyTree () {
-    MyTreeTest t = new MyTreeTest(printPriority);
-    t.run();
+    new MyTreeTest(printPriority);
   }
 
 }

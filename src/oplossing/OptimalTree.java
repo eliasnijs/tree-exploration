@@ -15,19 +15,6 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         size = 0;
     }
 
-    public void printPrioriyQueue (PriorityQueue<DataEntry> q) {
-        Stack<DataEntry> a = new Stack<>();
-        while (0<q.size()) {
-            DataEntry e = q.poll();
-            System.out.print(e + ", ");
-            a.add(e);
-        }
-        System.out.println();
-        while (a.size()>0) {
-            q.add(a.pop());
-        }
-    }
-
     private class DataEntry {
         public E key;
         public Double weight;
@@ -38,34 +25,29 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         if (keys.size() != weights.size()) { System.out.println("invalid keys and weights! quitting `OptimalTree` test...");
         }
         root = null;
-        PriorityQueue<DataEntry> data = new PriorityQueue<>((e1,e2) -> {
-            int r = e2.weight.compareTo(e1.weight);
-            return (r != 0)? r : e1.key.compareTo(e2.key);
-        });
+        PriorityQueue<DataEntry> data = new PriorityQueue<>((e1,e2) -> { int r = e2.weight.compareTo(e1.weight); return (r != 0)? r : e1.key.compareTo(e2.key); });
         for (int i=0; i < keys.size(); ++i) {
             DataEntry e = new DataEntry();
-            e.key = keys.get(i);
+            e.key = keys.get(i); 
             e.weight = weights.get(i);
             data.offer(e);
         }
         while (data.size() > 0) {
             double weight = data.peek().weight;
             ArrayList<E> tbpKeys = new ArrayList<>();
-            while (data.size() > 0) {
-                if (data.peek().weight != weight) { break;
-                } 
+            while (data.size() > 0 && data.peek().weight == weight) {
                 tbpKeys.add(data.poll().key);
             } 
-            placekey(tbpKeys, (tbpKeys.size()-1)/2, tbpKeys.size());
+            placeKeys(tbpKeys, (tbpKeys.size()-1)/2, tbpKeys.size());
         } 
     }
     
-    public void placekey (ArrayList<E> keys, int m, int l) {
+    public void placeKeys (ArrayList<E> keys, int m, int l) {
         if (l == 0) { return;
         }
         this.add(keys.get(m));
-        placekey(keys,m-(l-m)/2,l/2);
-        placekey(keys,m+(l-m)/2,l/2);
+        placeKeys(keys,m-(l-m)/2,l/2);
+        placeKeys(keys,m+(l-m)/2,l/2);
     }
 
     private static class WeightDataExternal {
@@ -82,9 +64,8 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         for (int i=0; i<twidth; ++i) {
             WeightDataExternal pd = new WeightDataExternal();
             pd.weight = externalWeights.get(i); 
-            pd.cost   = 0;
-            pd.rootindex  = 0;
-            
+            pd.cost = 0;
+            pd.rootindex = 0;
             table[0][i] = pd;
         } 
         // TODO (Elias): Do some more research on this solution/algorithm
@@ -106,17 +87,17 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
                 table[r][c] = pd;
             }
         }
-        placeKey(table, keys, 0, externalWeights.size()-1);
+        placeKeys(table, keys, 0, externalWeights.size()-1);
     }
 
-    public void placeKey(WeightDataExternal table[][], List<E> keys, int b, int e) {
-        if (b >= e) {
-            return;
+    public void placeKeys (WeightDataExternal table[][], List<E> keys, int b, int e) {
+        if (b >= e) { 
+            return; 
         }
         int i = table[e-b][b].rootindex;
         this.add(keys.get(i-1));
-        placeKey(table, keys, 0, i-1);
-        placeKey(table, keys, i, e);
+        placeKeys(table, keys, 0, i-1);
+        placeKeys(table, keys, i, e);
     }
 
     @Override

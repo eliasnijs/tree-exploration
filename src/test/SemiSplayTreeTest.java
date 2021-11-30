@@ -12,33 +12,45 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.SortedSet;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SemiSplayTreeTest extends Test {
+    
+    private final HashMap<String,Runnable> tests = new HashMap<String, Runnable> () {{
+            // basic tests
+            put("compile test",     () -> compileTest());
+            put("add test 1",       () -> addTest1());
+            put("search test 1",    () -> searchTest1());
+            put("remove test 1",    () -> removeTest1());
+            put("remove test 2",    () -> removeTest2());
+            put("remove test 3",    () -> removeTest3());
+            put("iterator test",    () -> iteratorTest());
+            // splay base case
+            put("splay simple BB",  () -> splaySimpleBB());
+            put("splay simple BS",  () -> splaySimpleBS());
+            put("splay simple SS",  () -> splaySimpleSS());
+            put("splay simple SB",  () -> splaySimpleSB());
+            // splay tests
+            put("splay normal 1",   () -> splayNormal1());
+            put("splay normal 2",   () -> splayNormal2());
+            put("splay normal 3",   () -> splayNormal3());
+            put("splay add",        () -> splayAdd());
+            put("splay remove 1",   () -> splayRemove1());
+            put("splay remove 2",   () -> splayRemove2());
+            put("splay remove 3",   () -> splayRemove3());
+            put("splay advanced 1", () -> splayAdvanced1());
+            put("splay advanced 2", () -> removeShouldSplayFromReplacement());
+            put("splay advanced 3", () -> advancedIteratorTest());
+    }};
 
-    SemiSplayTreeTest (boolean printPriority) {
+    public SemiSplayTreeTest (boolean printPriority) {
         super(printPriority);
         System.out.println("\n > SEMISPLAY TESTS\n");
         printStatusHeader();
+        runTests(tests);
     }
 
-    public void run () {
-        basicTreeTests();
-        simpleSplayTests();
-        splayNormalTests();
-        iteratorTest();
-    }
-
-    public void basicTreeTests () {
-        compileTest();
-        addTest1();
-        searchTest1();
-        removeTest1();
-        removeTest2();
-        removeTest3();
-        iteratorTest();
-    }
-
-   
     public void compileTest () {
         SemiSplayTree<Integer> t = new SemiSplayTree<>();
         assertTrue("compile test", t != null);
@@ -129,10 +141,6 @@ public class SemiSplayTreeTest extends Test {
     }
     
     public void simpleSplayTests () {
-        splaySimpleBB();
-        splaySimpleBS();
-        splaySimpleSS();
-        splaySimpleSB();
     }
 
     public boolean splaySimpleBB () {
@@ -224,16 +232,6 @@ public class SemiSplayTreeTest extends Test {
     } 
 
     public void splayNormalTests () {
-        splayNormal1();
-        splayNormal2();
-        splayNormal3();
-        splayAdd();
-        splayRemove1();
-        splayRemove2();
-        splayRemove3();
-        splayAdvanced1();
-        removeShouldSplayFromReplacement();
-        advancedIteratorTest();
     }
 
     // Nodes underneath

@@ -7,19 +7,41 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OptimalTreeTest extends Test {
+
+    private final HashMap<String,Runnable> tests = new HashMap<String, Runnable> () {{
+            // basic tests
+            put("compile test",     () -> compileTest());
+            put("add test 1",       () -> addTest1());
+            put("search test 1",    () -> searchTest1());
+            put("remove test 1",    () -> removeTest1());
+            put("remove test 2",    () -> removeTest2());
+            put("remove test 3",    () -> removeTest3());
+            put("iterator test",    () -> iteratorTest());
+            // No external 
+            put("throw away",       () -> shouldThrowAwayExisting());
+            put("single item",      () -> singleItem());
+            put("two descending",   () -> twoDescending());
+            put("two ascending",    () -> twoAscending());
+            put("seven equal",      () -> sevenEqual());
+            // External
+            put("seven equal external",     () -> sevenEqualWithExternal());
+            put("single item external",     () -> singleItemWithExternal());
+            put("descending external",      () -> descendingExternal());
+            put("ascending external",       () -> ascendingExternal());
+            put("simple external",          () -> simpleWithExternal());
+            put("example with external",    () -> exampleWithExternal());
+            put("zigzag external",          () -> zigzagExternal());
+    }};
 
     OptimalTreeTest (boolean printPriority) {
         super(printPriority);
         System.out.println("\n > OPTIMALTREE TESTS\n");
         printStatusHeader();
-    }
-
-    public void run () {
-        basicTreeTest();
-        givenTestsWithoutExternal();
-        givenTestsWithExternal();
+        runTests(tests);
     }
     
     public double treeWeight(SearchTree<Integer> tree, List<Integer> keys, List<Double> internal, List<Double> external) {
@@ -54,16 +76,6 @@ public class OptimalTreeTest extends Test {
         return w;
     }
 
-    public void basicTreeTest () {
-        compileTest();
-        addTest1();
-        searchTest1();
-        removeTest1();
-        removeTest2();
-        removeTest3();
-        iteratorTest();
-    }
-    
     public void compileTest () {
         OptimalTree<Integer> t = new OptimalTree<>();
         assertTrue("compile test", t != null);
@@ -153,14 +165,6 @@ public class OptimalTreeTest extends Test {
         iter.next();
     }
    
-    public void givenTestsWithoutExternal () {
-        shouldThrowAwayExisting();
-        singleItem();
-        twoDescending();
-        twoAscending();
-        sevenEqual();
-    }
-
     public void shouldThrowAwayExisting() {
         OptimizableTree<Integer> tree = new OptimalTree<>();
         tree.add(1);
@@ -228,16 +232,6 @@ public class OptimalTreeTest extends Test {
         assertTrue("seven equal", 17d == treeWeight(tree, keys, weights, null));
     }
     
-    public void givenTestsWithExternal () {
-        sevenEqualWithExternal();
-        singleItemWithExternal();
-        descendingExternal();
-        ascendingExternal();
-        zigzagExternal();
-        exampleWithExternal();
-        simpleWithExternal();
-    }
-
     public void singleItemWithExternal() {
         OptimizableTree<Integer> tree = new OptimalTree<>();
         List<Integer> keys = List.of(1);

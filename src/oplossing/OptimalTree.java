@@ -54,9 +54,6 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         public double weight;
         public double cost;
         public int rootindex;
-        public String toString () {
-            return "{" + rootindex + ", " + weight + ", " + cost + "}";
-        }
     }
 
     @Override
@@ -90,11 +87,6 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
                 table[r][c] = pd;
             }
         }
-        for (int i = 0; i < twidth; ++i) {
-            for (int j = 0; j < twidth; ++j) {
-                System.out.print(j + ":" + (i + j) + " " + table[i][j] + "\t");
-            } System.out.println();
-        }
         placeKeys(table, keys, 0, externalWeights.size()-1);
     }
 
@@ -102,11 +94,9 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         if (b >= e) {
             return; 
         }
-        System.out.println(b + ", " + e);
         int i = table[e-b][b].rootindex;
-        System.out.println(i-1);
         this.add(keys.get(i-1));
-        placeKeys(table, keys, 1, i-1);
+        placeKeys(table, keys, b, i-1);
         placeKeys(table, keys, i, e);
     }
 

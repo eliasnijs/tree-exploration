@@ -19,6 +19,14 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         public E key;
         public Double weight;
     }
+    
+    public void placeKeys (ArrayList<E> keys, int m, int l) {
+        if (l == 0) { return;
+        }
+        this.add(keys.get(m));
+        placeKeys(keys,m-(l-m)/2,l/2);
+        placeKeys(keys,m+(l-m)/2,l/2);
+    }
 
     @Override
     public void optimize(List<E> keys, List<Double> weights) {
@@ -41,35 +49,40 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
             placeKeys(tbpKeys, (tbpKeys.size()-1)/2, tbpKeys.size());
         } 
     }
-    
-    public void placeKeys (ArrayList<E> keys, int m, int l) {
-        if (l == 0) { return;
-        }
-        this.add(keys.get(m));
-        placeKeys(keys,m-(l-m)/2,l/2);
-        placeKeys(keys,m+(l-m)/2,l/2);
-    }
 
     private static class WeightDataExternal {
         public double weight;
         public double cost;
         public int rootindex;
     }
+    
+    public void placeKeys (WeightDataExternal table[][], List<E> keys, int b, int e) {
+        if (b >= e) { return; 
+        }
+        int i = table[e-b][b].rootindex;
+        this.add(keys.get(i-1));
+        placeKeys(table, keys, b, i-1);
+        placeKeys(table, keys, i, e);
+    }
 
+    // -- NOTE (Elias): The formulas used work with ranges from index i to j. To get the corresponding cell in the table,
+    //                  we need to convert range {i,j} to location {j-i, i} in the table (location in the table is denoted as {row, column}). 
+    //                  The reverse is also used multiple times, location {r,c} in the table becomes range {c, r+c}.
+    // -- NOTE (Elias): For a detailed explanation of the ideas behind the algorithm see: 
+    //                  https://www.youtube.com/watch?v=wAy6nDMPYAE&t=3071s 
     @Override
     public void optimize(List<E> keys, List<Double> internalWeights, List<Double> externalWeights) {
         root = null;
         int twidth = externalWeights.size();
         WeightDataExternal table[][] = new WeightDataExternal[twidth][twidth];
-        for (int i=0; i<twidth; ++i) {
+        for (int i=0; i<twidth; ++i) { // initialise the table by filling in the first row
             WeightDataExternal pd = new WeightDataExternal();
             pd.weight = externalWeights.get(i); 
             pd.cost = 0;
             pd.rootindex = 0;
             table[0][i] = pd;
         } 
-        // TODO (Elias): Do some more research on this solution/algorithm
-        for (int r=1; r<twidth; ++r) {
+        for (int r=1; r<twidth; ++r) { // Complete the full table
             for (int c=0; c<twidth-r; ++c) {
                 int j=c+r;
                 WeightDataExternal pd = new WeightDataExternal();
@@ -88,16 +101,6 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
             }
         }
         placeKeys(table, keys, 0, externalWeights.size()-1);
-    }
-
-    public void placeKeys (WeightDataExternal table[][], List<E> keys, int b, int e) {
-        if (b >= e) {
-            return; 
-        }
-        int i = table[e-b][b].rootindex;
-        this.add(keys.get(i-1));
-        placeKeys(table, keys, b, i-1);
-        placeKeys(table, keys, i, e);
     }
 
     @Override

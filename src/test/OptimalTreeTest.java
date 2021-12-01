@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OptimalTreeTest extends Test {
+    
+    OptimalTreeTest (boolean printPriority) {
+        super(printPriority, "OPTIMALTREE TESTS");
+        super.tests = tests;
+    }
 
     private final HashMap<String,Runnable> tests = new HashMap<String, Runnable> () {{
             // basic tests
@@ -37,13 +42,6 @@ public class OptimalTreeTest extends Test {
             put("zigzag external",          () -> zigzagExternal());
     }};
 
-    OptimalTreeTest (boolean printPriority) {
-        super(printPriority);
-        System.out.println("\n > OPTIMALTREE TESTS\n");
-        printStatusHeader();
-        runTests(tests);
-    }
-    
     public double treeWeight(SearchTree<Integer> tree, List<Integer> keys, List<Double> internal, List<Double> external) {
         if (external == null) {
             external = new ArrayList<>();
@@ -265,7 +263,6 @@ public class OptimalTreeTest extends Test {
         assertTrue("seven equal external", 49d == treeWeight(tree, keys, weights, external));
     }
 
-    // TODO (Elias): send mail
     public void descendingExternal() {
         OptimizableTree<Integer> tree = new OptimalTree<>();
 
@@ -274,13 +271,11 @@ public class OptimalTreeTest extends Test {
         List<Double> external = List.of(4d, 3d, 2d, 2d);
 
         tree.optimize(keys, weights, external);
-        printTree(tree.root());
-        System.out.println("Weight: " + treeWeight(tree, keys, weights, external));
-        // assertTrue("descending external", 1 == tree.root().getValue());
-        // assertTrue("descending external", null == tree.root().getLeft());
-        // assertTrue("descending external", 2 == tree.root().getRight().getValue());
-        // assertTrue("descending external", null == tree.root().getRight().getLeft());
-        // assertTrue("descending external", 3 == tree.root().getRight().getRight().getValue());
+        assertTrue("descending external", 1 == tree.root().getValue());
+        assertTrue("descending external", null == tree.root().getLeft());
+        assertTrue("descending external", 2 == tree.root().getRight().getValue());
+        assertTrue("descending external", null == tree.root().getRight().getLeft());
+        assertTrue("descending external", 3 == tree.root().getRight().getRight().getValue());
 
         assertTrue("descending external", 43d == treeWeight(tree, keys, weights, external));
     }

@@ -10,7 +10,10 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     private Node<E> root;
     private int size;
+    private int nodesTraversed;
 
+    // -- NOTE (Elias): A global variable was chosen for the splaypath because it will be accessed frequently
+    //                  and since the class doesn't have too many parameters it doesn't become unclear to debug.
     private Stack<Node<E>> splaypath;
 
     public SemiSplayTree () {
@@ -21,6 +24,10 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     public void setRoot (Node<E> n) {
         root = n;
+    }
+
+    public int getNodeAmount () {
+        return nodesTraversed;
     }
 
     public void splay () {
@@ -63,7 +70,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                 root = splaypath.pop();        
                 break;
             }
-
             Node<E> child = splaypath.pop();
             Node<E> parent = splaypath.pop();
             if (child.getValue().compareTo(parent.getValue()) < 0) {
@@ -99,6 +105,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     public boolean searchHelper (E o, Node<E> node) {
+        nodesTraversed++;
         splaypath.push(node);
         if (o.compareTo(node.getValue()) < 0) {
             return node.getLeft() != null && searchHelper(o, node.getLeft());
@@ -123,6 +130,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     public boolean addHelper(E o, Node<E> node) {
         splaypath.push(node);
+        nodesTraversed++;
         if (o.compareTo(node.getValue()) < 0) {
             if (node.getLeft() == null) {
                 node.setLeft(new Node<>(o));
@@ -149,6 +157,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
        
         Node<E> parent = removeFindParentNode(comparable, root, root);
         if (parent == null) {
+            splay();
             return false; 
         }
 
@@ -190,13 +199,13 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         } else {
             root = null;
         }
-
         splay();
         size--;
         return true;
     }
 
     public Node<E> removeFindRightParent (Node<E> parent, Node<E> node) {
+        nodesTraversed++;
         if (node.getRight() != null) {
             splaypath.push(node);
             return removeFindRightParent(node, node.getRight()); 
@@ -205,6 +214,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
     
     public Node<E> removeFindParentNode (E o, Node<E> parent, Node<E> node) {
+        nodesTraversed++;
         if (o.compareTo(node.getValue()) < 0) {
             splaypath.push(node);
             return (node.getLeft() != null)? removeFindParentNode(o, node, node.getLeft()) : null;

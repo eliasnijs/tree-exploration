@@ -17,6 +17,11 @@ import java.util.Map;
 
 public class SemiSplayTreeTest extends Test {
     
+    public SemiSplayTreeTest (boolean printPriority) {
+        super(printPriority, "SEMISPLAY TESTS");
+        super.tests = tests;
+    }
+    
     private final HashMap<String,Runnable> tests = new HashMap<String, Runnable> () {{
             // basic tests
             put("compile test",     () -> compileTest());
@@ -31,7 +36,7 @@ public class SemiSplayTreeTest extends Test {
             put("splay simple BS",  () -> splaySimpleBS());
             put("splay simple SS",  () -> splaySimpleSS());
             put("splay simple SB",  () -> splaySimpleSB());
-            // splay tests
+            // splay normal tests
             put("splay normal 1",   () -> splayNormal1());
             put("splay normal 2",   () -> splayNormal2());
             put("splay normal 3",   () -> splayNormal3());
@@ -43,13 +48,6 @@ public class SemiSplayTreeTest extends Test {
             put("splay advanced 2", () -> removeShouldSplayFromReplacement());
             put("splay advanced 3", () -> advancedIteratorTest());
     }};
-
-    public SemiSplayTreeTest (boolean printPriority) {
-        super(printPriority);
-        System.out.println("\n > SEMISPLAY TESTS\n");
-        printStatusHeader();
-        runTests(tests);
-    }
 
     public void compileTest () {
         SemiSplayTree<Integer> t = new SemiSplayTree<>();
@@ -140,9 +138,6 @@ public class SemiSplayTreeTest extends Test {
         Iterator<Integer> iter = t.iterator();
     }
     
-    public void simpleSplayTests () {
-    }
-
     public boolean splaySimpleBB () {
         BinarySearchTree<Integer> reference = new BinarySearchTree<>();
         reference.add(5); 
@@ -282,7 +277,6 @@ public class SemiSplayTreeTest extends Test {
         return assertTrue("splay normal 2 - compare tree with reference", compareTree(treeRoot, refRoot));
     }
 
-    // Nodes above and underneath
     public boolean splayNormal3 () {
         BinarySearchTree<Integer> reference = new BinarySearchTree<>();
         int[] bstValues = {2, 7, 10, 9, 5, 6, 3};

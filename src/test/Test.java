@@ -4,15 +4,24 @@ import opgave.Node;
 import java.util.*;
 import java.util.Map;
 
-public class Test {
+public abstract class Test {
 
+    private final String name;
     private boolean printPriority;
+    protected Map<String,Runnable> tests;
 
-    public Test (boolean printPriority) {
+    public Test (boolean printPriority, String name) {
         this.printPriority = printPriority;
+        this.name = name;
+        System.out.println("\n > "+ name +" \n");
+        System.out.println("   Status   |    Name");
+        System.out.println(" ---------- | -----------------------------------------");
     }
 
-    public void runTests (Map<String, Runnable> tests) {
+    public void runTests () {
+        if (tests == null) {
+            System.out.println("   no tests where specified! quitting tests...");
+        }
         HashMap<String, Long> benchmarks = new HashMap<>();
         for (Map.Entry<String, Runnable> entry : tests.entrySet()) {
             System.out.println(" > " + entry.getKey());
@@ -21,35 +30,32 @@ public class Test {
             long ett = System.nanoTime();
             benchmarks.put(entry.getKey(), (ett-stt));
         }
-        // Print table
-        long totaltime = 0;
         System.out.println();
-        System.out.println(" > Benchmarks");
-        System.out.println("    Time(ns)           |   Name");
-        System.out.println(" --------------------- | -----------------------------------------");
+        System.out.println(" > Time table");
+        System.out.println("   Time(ns)      |    Name");
+        System.out.println(" --------------- | -----------------------------------------");
+        long totaltime = 0;
         for (Map.Entry<String, Long> entry : benchmarks.entrySet()) {
-            System.out.println(String.format("    %-18d |   %s ", entry.getValue(), entry.getKey()));
+            System.out.println(String.format("    %-12d |   %s ", entry.getValue(), entry.getKey()));
             totaltime += entry.getValue();
         }
         System.out.println("  Total time:  " + totaltime + "ns\n");
     }
     
-    public boolean assertTrue (String name, boolean p1) {
-        printStatus(name, p1);
-        return p1;
-    }
-
-    public void printStatusHeader () {
-        System.out.println("   Status   |    Name");
-        System.out.println(" ---------- | -----------------------------------------");
-    }
-
-    public void printStatus (String name, boolean b) {
+    private void printStatus (String name, boolean b) {
         if (b && printPriority) {
             System.out.println("\033[0;32m   SUCCES\033[0m   |    " + name);
         } else if (!b) {
             System.out.println("\033[0;31m   FAILED\033[0m   |    " + "\033[0;31m" + name +  "\033[0m");
         }
+    }
+
+    // -- NOTE (Elias): All functions from here on are functions that you can use to test and debug...
+    // Current functions inlucde: assertTrue(...), compareNodes(...), toList(...), compareTree(...), treeToString(...), printTree(...), generatePerm(...)
+    
+    protected boolean assertTrue (String name, boolean p1) {
+        printStatus(name, p1);
+        return p1;
     }
 
     public boolean compareNodes (Node n1, Node n2) {
@@ -108,12 +114,12 @@ public class Test {
         rootData.x = 0;
         rootData.y = 0;
         rootData.node = n;
-
+        
         ArrayList<NodeContext> collection = new ArrayList<>();
-
+       
         printTreeHelper(rootData, collection);
         
-        int width = collection.size()*2; 
+        int width  = collection.size()*2; 
         int height = 0;
         for (NodeContext nodeData : collection) {
             height = Math.max(height, nodeData.y + 1);
@@ -143,8 +149,8 @@ public class Test {
         }
     }
 
-    // NOTE (Elias): Order of operation will ensure all NodeContexts are collected in the right order (i.e. left -> middle -> right)
-    public void printTreeHelper (NodeContext nd, ArrayList<NodeContext> collection) {
+    // -- NOTE (Elias): Order of operation will ensure all NodeContexts are collected in the right order (i.e. left -> middle -> right)
+    private void printTreeHelper (NodeContext nd, ArrayList<NodeContext> collection) {
         Node l = nd.node.getLeft();
         if (l != null) {
             NodeContext lnd = new NodeContext();

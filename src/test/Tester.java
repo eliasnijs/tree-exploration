@@ -1,9 +1,13 @@
 package test;
 
 import test.*;
+  
+  // -- NOTE (Elias): This testing framework is meant to be run in terminal.
+  // !! NOTE (Elias): The testing framework was made for my own system which runs on linux, 
+  //                  there might be unforseen differences with a windows or macos setup.
 
 public class Tester {
-
+  
   private String[] argv;
   private int argc;
   
@@ -15,6 +19,8 @@ public class Tester {
     printPriority = true;
   }
 
+  // OPTTODO (Elias): This way of checking command line arguments is far from good code imo :( .
+  //                  If there is time left, clean this up.
   public void run () {
     if (argc > 0) {
       switch (argv[0]) {
@@ -63,15 +69,18 @@ public class Tester {
   }
 
   private void testSemisplayTree () {
-    new SemiSplayTreeTest(printPriority);
+    SemiSplayTreeTest t = new SemiSplayTreeTest(printPriority);
+    t.runTests();
   }
 
   private void testOptimalTree () {
-    new OptimalTreeTest(printPriority);
+    OptimalTreeTest t = new OptimalTreeTest(printPriority);
+    t.runTests();
   }
 
   private void testMyTree () {
-    new MyTreeTest(printPriority);
+    MyTreeTest t = new MyTreeTest(printPriority);
+    t.runTests();
   }
 
 }

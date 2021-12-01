@@ -6,28 +6,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class MyTreeTest extends Test {
 
     MyTreeTest (boolean printPriority) {
-        super(printPriority);
-        System.out.println("\n > MYTREE TESTS\n");
-        printStatusHeader();
+        super(printPriority, "MYTREE TESTS");
+        super.tests = tests;
     }
 
-    public void run () {
-    }
-    
-    public void basicTreeTest () {
-        compileTest();
-        addTest1();
-        searchTest1();
-        removeTest1();
-        removeTest2();
-        removeTest3();
-        iteratorTest();
-    }
-    
+    private final HashMap<String,Runnable> tests = new HashMap<String, Runnable> () {{
+            put("compile test",  () -> compileTest());
+            put("add test 1",    () -> addTest1());
+            put("search test 1", () -> searchTest1());
+            put("remove test 1", () -> removeTest1());
+            put("remove test 2", () -> removeTest2());
+            put("remove test 3", () -> removeTest3());
+            put("iterator test", () -> iteratorTest());
+    }};
+
     public void compileTest () {
         OptimalTree<Integer> t = new OptimalTree<>();
         assertTrue("compile test", t != null);

@@ -14,9 +14,8 @@ import java.util.NoSuchElementException;
 
 public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
 
-    private static final double MAXWEIGHT   = 21;
-    private static final double MAXUNSTABLE = 1.0;
-    private static final double SMLT        = 1.5;
+    private static final double MAXUNSTABLE = 0.2;
+    private static final double SMLT        = 1.25;
 
     private NodeMT<E> root;
     private HashSet<E> unstables;
@@ -40,16 +39,17 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
     }
 
     public void balance() {
-        if (unstables.size() / size <= MAXUNSTABLE) {
+        if (unstables.size()/size < MAXUNSTABLE) {
             return; 
         }
         PriorityQueue<NodeMT<E>> queue = new PriorityQueue<>((e1,e2) -> { 
             int r = Double.valueOf(e2.getWeight()).compareTo(Double.valueOf(e1.getWeight())); 
             return (r != 0)? r : e1.getValue().compareTo(e2.getValue()); 
         });
+        System.out.println("sdf");
         makeQueue(root, queue);
         root = null;
-        while (queue.size() > 1) {
+        while (queue.size() > 0) {
             double weight = queue.peek().getWeight();
             ArrayList<E> tbpKeys = new ArrayList<>();
             while (queue.size() > 0 && queue.peek().getWeight() == weight) {
@@ -97,19 +97,18 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
         if (root == null) {
             return false;
         }
-        double w = searchHelper(o, root);
-        if (w > MAXWEIGHT) {
-            unstables.add(o);
-            balance();
-        } 
+        double w = searchHelper(o, root, -1);
+        unstables.add(o);
+        balance();
         return w != -1.0;
     }
 
-    public double searchHelper (E o, NodeMT<E> node) {
+    public double searchHelper (E o, NodeMT<E> node, int dist) {
+        dist += 1;
         if (o.compareTo(node.getValue()) < 0) {
-            return (node.getLeft() != null)? searchHelper(o, node.getLeft()) : -1.0;
+            return (node.getLeft() != null)? searchHelper(o, node.getLeft(), dist) : -1.0;
         } else if (o.compareTo(node.getValue()) > 0) {
-            return (node.getRight() != null)? searchHelper(o, node.getRight()) : -1.0;
+            return (node.getRight() != null)? searchHelper(o, node.getRight(), dist) : -1.0;
         } 
         node.multWeight(SMLT); 
         return node.getWeight(); 
@@ -117,7 +116,8 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
 
     @Override
     public boolean add(E o) {
-        if (root == null) { root = new NodeMT<>(o, 1.0);
+        if (root == null) { 
+            root = new NodeMT<>(o, 1.0);
             size += 1;
             return true;
         }

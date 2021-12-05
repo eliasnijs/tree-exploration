@@ -40,7 +40,7 @@ public class Benchmarker {
     public Result[] results;
   }
   
-  private final static int SAMPLE_COUNT = 10;
+  private final static int SAMPLE_COUNT = 20;
   
   private final Random random = new Random();
   private final List<Tree> trees;

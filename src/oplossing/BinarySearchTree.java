@@ -5,7 +5,7 @@ import opgave.SearchTree;
 
 import java.util.*;
 
-public class BinarySearchTree<E extends Comparable<E>> implements SearchTree<E> {
+public class BinarySearchTree<E extends Comparable<E>> implements SearchTreeB<E> {
 
     private Node<E> root;
     private int size;
@@ -15,13 +15,17 @@ public class BinarySearchTree<E extends Comparable<E>> implements SearchTree<E> 
         size = 0;
     }
 
-    // Get root of tree
     @Override
     public Node<E> root() {
         return root;
     }
 
-    // Get size of tree
+    @Override
+    public void clear () {
+        root = null;
+        size = 0;
+    }
+
     @Override
     public int size() {
         return size;

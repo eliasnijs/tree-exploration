@@ -1,11 +1,18 @@
 package oplossing;
 
 import opgave.Node;
-import opgave.SearchTree;
+import oplossing.SearchTreeB;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ArrayDeque;
+import java.util.PriorityQueue;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
+public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
+
+    private static final double MAXUNSTABILITY = 1500;
 
     private Node<E> root;
     private int size;
@@ -13,6 +20,41 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
     public void SemiSplayTree () {
         root = null;
         size = 0;
+    }
+    
+    private class DataEntry {
+        public E key;
+        public Double weight;
+    }
+
+    public void placeKeys (ArrayList<E> keys, int m, int l) {
+        if (l == 0) { return;
+        }
+        this.add(keys.get(m));
+        placeKeys(keys,m-(l-m)/2,l/2);
+        placeKeys(keys,m+(l-m)/2,l/2);
+    }
+
+    // TODO Add weights
+    public void optimize(List<E> keys, List<Double> weights) {
+        if (keys.size() != weights.size()) { System.out.println("invalid keys and weights! quitting `OptimalTree` test...");
+        }
+        root = null;
+        PriorityQueue<DataEntry> data = new PriorityQueue<>((e1,e2) -> { int r = e2.weight.compareTo(e1.weight); return (r != 0)? r : e1.key.compareTo(e2.key); });
+        for (int i=0; i < keys.size(); ++i) {
+            DataEntry e = new DataEntry();
+            e.key = keys.get(i); 
+            e.weight = weights.get(i);
+            data.offer(e);
+        }
+        while (data.size() > 0) {
+            double weight = data.peek().weight;
+            ArrayList<E> tbpKeys = new ArrayList<>();
+            while (data.size() > 0 && data.peek().weight == weight) {
+                tbpKeys.add(data.poll().key);
+            } 
+            placeKeys(tbpKeys, (tbpKeys.size()-1)/2, tbpKeys.size());
+        } 
     }
 
     @Override
@@ -25,6 +67,12 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
         return size;
     }
 
+    @Override 
+    public void clear() {
+        root = null;
+        size = 0;
+    }
+   
     @Override
     public boolean search(E o) {
         return root != null && searchHelper(o, root);
@@ -57,8 +105,7 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
                 node.setLeft(new Node<>(o));
                 return true;
             }
-            return addHelper(o, node.getLeft());
-        } else if (o.compareTo(node.getValue()) > 0) {
+            return addHelper(o, node.getLeft()); } else if (o.compareTo(node.getValue()) > 0) {
             if (node.getRight() == null) {
                 node.setRight(new Node<>(o));
                 return true;
@@ -69,20 +116,20 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     @Override
-    public boolean remove(E comparable) {
+    public boolean remove(E o) {
         if (root == null) {
             return false; 
         }
        
-        Node<E> parent = removeFindParentNode(comparable, root, root);
+        Node<E> parent = removeFindParentNode(o, root, root);
         if (parent == null) {
             return false; 
         }
 
-        Node<E> node = (comparable.compareTo(root.getValue()) == 0)?  root : 
-            (comparable.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
+        Node<E> node = (o.compareTo(root.getValue()) == 0)?  root : 
+            (o.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
         
-        int nodeIsSmaller = comparable.compareTo(parent.getValue());
+        int nodeIsSmaller = o.compareTo(parent.getValue());
         if (node.getLeft() != null && node.getRight() == null) {
             if (nodeIsSmaller < 0) {
                 parent.setLeft(node.getLeft());
@@ -116,7 +163,7 @@ public class MyTree<E extends Comparable<E>> implements SearchTree<E> {
         } else {
             root = null;
         }
-
+      
         size--;
         return true;
     }

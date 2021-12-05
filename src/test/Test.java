@@ -24,12 +24,15 @@ public abstract class Test {
         }
         HashMap<String, Long> benchmarks = new HashMap<>();
         for (Map.Entry<String, Runnable> entry : tests.entrySet()) {
-            System.out.println(" > " + entry.getKey());
             long stt = System.nanoTime();
             entry.getValue().run();
             long ett = System.nanoTime();
             benchmarks.put(entry.getKey(), (ett-stt));
         }
+        printtime(benchmarks);
+    }
+
+    private void printtime (HashMap<String, Long> benchmarks) {
         System.out.println();
         System.out.println(" > Time table");
         System.out.println("   Time(ns)      |    Name");
@@ -41,7 +44,7 @@ public abstract class Test {
         }
         System.out.println("  Total time:  " + totaltime + "ns\n");
     }
-    
+
     private void printStatus (String name, boolean b) {
         if (b && printPriority) {
             System.out.println("\033[0;32m   SUCCES\033[0m   |    " + name);
@@ -52,7 +55,7 @@ public abstract class Test {
 
     // -- NOTE (Elias): All functions from here on are functions that you can use to test and debug...
     // Current functions inlucde: assertTrue(...), compareNodes(...), toList(...), compareTree(...), treeToString(...), printTree(...), generatePerm(...)
-    
+
     protected boolean assertTrue (String name, boolean p1) {
         printStatus(name, p1);
         return p1;
@@ -61,23 +64,23 @@ public abstract class Test {
     public boolean compareNodes (Node n1, Node n2) {
         boolean current = n1 == null && n2 == null;
         if (!current && n1 != null && n2 != null) {
-           current = n1.getValue() == n2.getValue();
+            current = n1.getValue() == n2.getValue();
         } 
 
         if (n1 == null || n2 == null) {
             return current;
         }
-        
+
         boolean left = n1.getLeft() == null && n2.getLeft() == null;
         if (!left && n1.getLeft() != null && n2.getLeft() != null) {
-           left = n1.getLeft().getValue() == n2.getLeft().getValue();
+            left = n1.getLeft().getValue() == n2.getLeft().getValue();
         } 
-        
+
         boolean right = n1.getRight() == null && n2.getRight() == null;
         if (!right && n1.getRight() != null && n2.getRight() != null) {
             right = n1.getRight().getValue() == n2.getRight().getValue();
         }  
-        
+
         return current && left && right;
     }
 
@@ -88,11 +91,11 @@ public abstract class Test {
         }
         return list;
     }
-    
+
     public boolean compareTree(Node r1, Node r2) {
         return r1 != null && r2 != null && treeToString(r1).equals(treeToString(r2));
     }
-    
+
     public String treeToString(Node n) {
         return 
             "{" + 
@@ -114,11 +117,11 @@ public abstract class Test {
         rootData.x = 0;
         rootData.y = 0;
         rootData.node = n;
-        
+
         ArrayList<NodeContext> collection = new ArrayList<>();
-       
+
         printTreeHelper(rootData, collection);
-        
+
         int width  = collection.size()*2; 
         int height = 0;
         for (NodeContext nodeData : collection) {
@@ -126,7 +129,7 @@ public abstract class Test {
         }
         int offset = collection.get(0).x * -1;
         String[][] grid = new String[height][width];
-        
+
         for (int i=0; i<collection.size(); ++i) {
             NodeContext nd = collection.get(i);
             int move = 0;
@@ -143,9 +146,11 @@ public abstract class Test {
             }
         }
         System.out.print("\n");
-        for (String[] row : grid) { for (String cell : row) {
+        for (String[] row : grid) { 
+            for (String cell : row) {
                 System.out.print((cell == null)? "    ": " " + cell + " ");
-            } System.out.print("\n"); 
+                System.out.print("\n"); 
+            }
         }
     }
 
@@ -169,9 +174,9 @@ public abstract class Test {
             printTreeHelper(rnd, collection);
         }
     }
-   
+
     public <T> List<List<T>> generatePerm(List<T> original) {
-    // generatePerm function (c) https://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively answer by DaveFar
+        // generatePerm function (c) https://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively answer by DaveFar
         if (original.isEmpty()) {
             List<List<T>> result = new ArrayList<>();
             result.add(new ArrayList<>());

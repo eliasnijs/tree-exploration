@@ -1,0 +1,117 @@
+Name: Elias Nijs
+
+MYTREE
+
+IDEA 1:
+Keep left weight from node and right weight from root and call a balance function when the tree is tipping over.
+
+Extension:
+Keep left weight from node and right weight from root and call a balance function when the tree is tipping over.
+
+IDEA 2:
+Scenario: The chance of a key being searched again is unlikely and searches happen very often.
+Solution: Keys already searched for needs to go down in the tree in as few operations ass possible.
+
+-> Keys need to go down... How can we achieve this?
+
+Manual exploration of the idea:
+
+       7                                     7                                    7                                       7                                        0                                            11                                       11                                      9                                        7                                              7           
+     /   \                                 /   \                                /   \                                   /   \                                       \                                           / \                                      / \                                    / \                                     /   \                                          /   \              
+    2     11                              1     11                             5     11                                0     11                                      11                                        9  18                                    9  18                                  7   10                                  2     10                                       2    10            
+   / \    / \      --> search 2 -->      / \    / \     --> search 1 -->      / \    / \        --> search 5 -->        \    / \        --> search 7 -->             / \          --> search 0 -->            / \          --> search 10 -->           / \         --> search 11 -->          /     \      --> search 9 -->           / \   / \           --> search 18 -->          / \   / \            
+  1   5  9  18                          0   5  9  18                          0   2  9  18                               2  9  18                                   9  18                                    7   10                                   7   10                                 2      18                               1   5 9  18                                    1   5 9   11           
+ /        \                                /    \                             \      \                                  / \  \                                     / \                                      /                                        /                                      / \     /                               /         /                                    /           \          
+0         10                              2     10                             1     10                                1   5 10                                   7   10                                   2                                        2                                      1   5   11                              0         11                                   0            18          
+                                                                                                                                                                 /                                        / \                                      / \                                    /                                                                                                                                                                                                  
+                                                                                                                                                                2                                        1   5                                    1   5                                  0                                                                                                                                                                                                   
+                                                                                                                                                               / \                                      /                                        /                                                                                                                                                             
+                                                                                                                                                              1   5                                    0                                        0                                                                                                                                                                            
+
+Pour the manual exploration into a set of rules:
+
+ --> How can we do this?
+     Write down steps per action and then find the common and different steps and cases.
+     Then resolve the differences and write a general case down.
+
+Notes:
+
+Ideas:
+  - Use length of each side to determine on which side the node gets placed
+
+Search 2:
+  1. Go down on both sides until the node gets placed (left gets precedence over right) node gets
+  2. The side on which the node wasn't placed gets raised one level 
+
+Search 1:
+  1. Go down on both sides until the node gets placed (left gets precedence over right) node gets
+  2. The side on which the node wasn't placed gets raised one level 
+
+Search 5:
+  0. Check which sides are diveable
+  1. Go down on diveable sides until the node gets placed (left gets precedence over right) node gets
+  2. if (both sides were diveable) -> The side on which the node wasn't placed gets raised one level 
+     else                          -> same side gets raised one level
+
+Search 7.
+  0. Check which sides are diveable
+  1. Go down on diveable sides until the node gets placed (left gets precedence over right) node gets
+  2. if (both sides were diveable) -> The side on which the node wasn't placed gets raised one level 
+     else                          -> same side gets raised one level
+  3. if (flying node has a child on the side to which the other branch get stuck) -> decouple and readd the child node on that side
+
+Search 0.
+  0. Check which sides are diveable
+  1. Go down on diveable sides until the node gets placed (left gets precedence over right) node gets
+  2. if (both sides were diveable) -> The side on which the node wasn't placed gets raised one level 
+     else                          -> same side gets raised one level
+  3. if (flying node has a child on the side to which the other branch get stuck) -> decouple and readd the child node on that side
+
+Search 10.
+  0. Check which sides are diveable
+     if (no side diveable) -> return
+  1. Go down on diveable sides until the node gets placed (left gets precedence over right) node gets
+  2. if (both sides were diveable) -> The side on which the node wasn't placed gets raised one level 
+     else                          -> same side gets raised one level
+  3. if (flying node has a child on the side to which the other branch get stuck) -> decouple and readd the child node on that side
+
+Search 11.
+  0. Check which sides are diveable
+     if (no side diveable) -> return
+  1. Go down on diveable sides until the node gets placed (left gets precedence over right) node gets
+  2. if (both sides were diveable) -> The side on which the node wasn't placed gets raised one level 
+     else                          -> same side gets raised one level
+  3. if (flying node has a child on the side to which the other branch get stuck) -> decouple and readd the child node on that side
+
+Search 9.
+  0. Check which sides are diveable
+     if (no side diveable) -> return
+  1. Go down on diveable sides until the node gets placed (left gets precedence over right) node gets
+  2. if (both sides were diveable) -> The side on which the node wasn't placed gets raised one level 
+     else                          -> same side gets raised one level
+  3. if (flying node has a child on the side to which the other branch get stuck) -> decouple and readd the child node on that side
+
+Search 18.
+  0. Check which sides are diveable
+     if (no side diveable) -> return
+  1. Go down on diveable sides until the node gets placed (left gets precedence over right) node gets
+  2. if (both sides were diveable) -> The side on which the node wasn't placed gets raised one level 
+     else                          -> same side gets raised one level
+  3. if (flying node has a child on the side to which the other branch get stuck) -> decouple and readd the child node on that side
+
+Making the tree while writing down rules: 
+
+       7                                     7                                    7                                       7                                     11                                          11                                                                               2                                       2                                       2                                
+     /   \                                 /   \                                /   \                                   /   \                                  /   \                                       /  \                                                                             / \                                     / \                                     / \                                    
+    2     11                              5     11                             5     11                                2     11                               2    18                                     2   18                                                                           1   18                                  1   18                                  1   5                                  
+   / \    / \      --> search 2 -->      /      / \     --> search 1 -->      /      / \        --> search 5 -->      / \    / \        --> search 7 -->     / \                  --> search 0 -->       / \               --> search 10 -->   (no effect)         --> search 11 -->      /   /            --> search 9 -->       /   /            --> search 18 -->      /     \                                  
+  1   5  9  18                          1      9  18                         2       9  18                           0   5  9  18                           0   5                                       1   5                                                                            0   5                                   0   5                                   0       7                                  
+ /        \                            / \      \                           /        \                                \      \                               \   \                                     /     \                                                                                \                                       \                                           \                                
+0         10                          0   2     10                         0         10                                1     10                               1   7                                   0       7                                                                                7                                       7                                           10                               
+                                                                            \                                                                                      \                                           \                                                                                \                                       \                                         /  \                                                                                                                 
+                                                                             1                                                                                      9                                           9                                                                                9                                       10                                      9    11                                                                                                               
+                                                                                                                                                                     \                                           \                                                                                \                                     /  \                                           \                                 
+                                                                                                                                                                     10                                          10                                                                                10                                  9   11                                          18                                            
+                                                                                                                                                                                                                                                                                                    \                                                                                                                                
+                                                                                                                                                                                                                                                                                                     11                                                                                                                              
+

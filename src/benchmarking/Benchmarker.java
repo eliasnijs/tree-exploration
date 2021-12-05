@@ -2,7 +2,9 @@ package benchmarking;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Collections;
 
 import opgave.samplers.Sampler;
 import opgave.samplers.ZipfSampler;
@@ -12,132 +14,219 @@ import oplossing.SemiSplayTree;
 import oplossing.MyTree;
 import oplossing.OptimalTree;
 import oplossing.BinarySearchTree;
+import oplossing.SearchTreeB;
+
+import helpers.TreePrinter;
 
 public class Benchmarker {
 
   private static class Result {
-    public long time;
-    // NOTE (Elias): other data to collect needs to be added here
-    public String toString () {
-      return "" + time;
-    }
+    public double time;
   }
 
   private static class Operation {
-    public int operation; 
+    public int operation;  // !! 0 = add, 1 = remove, 2 = search
     public int value;
   }
 
-  public Benchmarker () {
-    System.out.println("   ALGORITHMS AND DATASTRUCTURES 2 -- PROJECT: BENCHMARKS");
+  private static class Tree {
+    public String name;
+    public SearchTreeB<Integer> tree;
+  }
+
+  private static class Test {
+    public String name;
+    public Operation[] operations;
+    public Result[] results;
   }
   
+  private final static int SAMPLE_COUNT = 10;
+  
+  private final Random random = new Random();
+  private final List<Tree> trees;
+  private Sampler prepareSampler;
+
+  private Sampler sampler;
+  private int amount;
+  private int upperbound;
+  private double exponent;
+
+  public Benchmarker () {
+    // System.out.println("ALGORITHMS AND DATASTRUCTURES 2 -- PROJECT: BENCHMARKS");
+    trees = new ArrayList<>();
+   
+    // NOTE (Elias): Add the trees to benchmark here
+    Tree semisplay = new Tree();
+    semisplay.name = "Semisplay";
+    semisplay.tree = new SemiSplayTree<Integer>();
+
+    Tree mytree = new Tree();
+    mytree.name = "MyTree";
+    mytree.tree = new MyTree<Integer>();
+
+    Tree bst = new Tree();
+    bst.name = "Simple";
+    bst.tree = new BinarySearchTree<Integer>();
+    
+    // trees.add(mytree);
+    trees.add(bst);
+    trees.add(semisplay);
+  }
+  
+  public void print (Test[] tests) {
+    System.out.println("Test parameters:" + " amount=" + amount + ", upperbound=" + upperbound + ", exponent=" + exponent);
+    System.out.print("Time(ms)                     ");
+    for (int i=0; i<trees.size(); ++i) {
+      System.out.print(String.format("| %-11s ", trees.get(i).name));
+    } System.out.println();
+    System.out.print("-----------------------------");
+    for (int i=0; i<trees.size(); ++i) {
+      System.out.print("|-------------");
+    } System.out.println();
+    for (int i=0; i<tests.length; ++i) {
+      System.out.print(String.format("%-29s", tests[i].name));
+      for (int j=0; j<tests[i].results.length; j++) {
+        System.out.print(String.format("| %-9.2f   ", tests[i].results[j].time));
+      } System.out.println();
+    }
+    System.out.println();
+  }
+
+  public void csvprint (Test[] tests) {
+    System.out.println(
+        String.format("%3.2f,%4.2f,%4.2f", exponent, tests[0].results[0].time, tests[0].results[1].time)
+        );
+  }
+    
+  // Add                      
+  // Remove                   
+  // Search                   
+  // Add    and remove (order)
+  // Add    and search (order)
+  // remove and add    (order)
+  // remove and search (order)
+  // search and add    (order)
+  // search and remove (order)
+  // Add    and remove (mix)   
+  // Add    and search (mix)  
+  // remove and search (mix)  
+  // all (mix)                
+
   public void run (int amount, int upperbound, double exp) {
-    test(amount, upperbound, exp);
-  }
+    this.amount  = amount;
+    this.upperbound = upperbound;
+    this.exponent = exp;
+    this.sampler = new ZipfSampler(random, upperbound, exp);
+    this.prepareSampler = new Sampler(random, upperbound);
 
-  public void print (String name, Result[][] r) {
-    System.out.println("\n   " + name);
-    System.out.println("   Time(ms)                     | Semisplay   | MyTree      | Simple ");
-    System.out.println("  ------------------------------|-------------|-------------|-------------");
-    System.out.println(String.format("   Add                          | %-9d   | %-9d   | %-9d   ", r[ 0][0].time, r[ 0][1].time, r[ 0][2].time));
-    // System.out.println(String.format("   Remove                       | %-9d   | %-9d   | %-9d   ", r[ 1][0].time, r[ 1][1].time, r[ 1][2].time));
-    // System.out.println(String.format("   Search                       | %-9d   | %-9d   | %-9d   ", r[ 2][0].time, r[ 2][1].time, r[ 2][2].time));
-    // System.out.println(String.format("   Add    and remove (order)    | %-9d   | %-9d   | %-9d   ", r[ 3][0].time, r[ 3][1].time, r[ 3][2].time));
-    // System.out.println(String.format("   Add    and search (order)    | %-9d   | %-9d   | %-9d   ", r[ 4][0].time, r[ 4][1].time, r[ 4][2].time));
-    // System.out.println(String.format("   remove and add    (order)    | %-9d   | %-9d   | %-9d   ", r[ 5][0].time, r[ 5][1].time, r[ 5][2].time));
-    // System.out.println(String.format("   remove and search (order)    | %-9d   | %-9d   | %-9d   ", r[ 6][0].time, r[ 6][1].time, r[ 6][2].time));
-    // System.out.println(String.format("   search and add    (order)    | %-9d   | %-9d   | %-9d   ", r[ 7][0].time, r[ 7][1].time, r[ 7][2].time));
-    // System.out.println(String.format("   search and remove (order)    | %-9d   | %-9d   | %-9d   ", r[ 8][0].time, r[ 8][1].time, r[ 8][2].time));
-    // System.out.println(String.format("   Add    and remove (mix)      | %-9d   | %-9d   | %-9d   ", r[ 8][0].time, r[ 8][1].time, r[ 8][2].time));
-    // System.out.println(String.format("   Add    and search (mix)      | %-9d   | %-9d   | %-9d   ", r[10][0].time, r[10][1].time, r[10][2].time));
-    // System.out.println(String.format("   remove and search (mix)      | %-9d   | %-9d   | %-9d   ", r[11][0].time, r[11][1].time, r[11][2].time));
-    // System.out.println(String.format("   all (mix)                    | %-9d   | %-9d   | %-9d   ", r[12][0].time, r[12][1].time, r[12][2].time));
+    // NOTE (Elias): Make a new test here and add it to `tests`.  You can use the 3 `buildOperations` functions to make the operations or use a custom function.
+    Test addTest = new Test();
+    addTest.name = "Add";
+    addTest.operations = buildOperations(0);
+
+    Test removeTest = new Test();
+    removeTest.name = "Remove";
+    removeTest.operations = buildOperations(1);
+
+    Test searchTest = new Test();
+    searchTest.name = "Search";
+    searchTest.operations = buildOperations(2);
+
+    Test allTest = new Test();
+    allTest.name = "All (mix)";
+    allTest.operations = buildOperations(new int[]{0,1,2});
+    
+    Test[] tests = new Test[]{
+      addTest,
+      // removeTest,
+      // searchTest,
+      // allTest
+      };
+
     // System.out.println();
+    for (int i=0; i<tests.length; ++i) {
+      // System.out.println("Test " + (i+1) + "/" + tests.length + " - " + tests[i].name);
+      test(tests[i]);
+    }
+    // System.out.println();
+    
+    csvprint(tests);
   }
 
-  public void test (int amount, int upperbound, double exp) {
-    Result results[][] = new Result[13][3];
-    
-    results[ 0] = singletest(upperbound, amount, exp, 0);
-    results[ 1] = singletest(upperbound, amount, exp, 1);
-    results[ 2] = singletest(upperbound, amount, exp, 2);
-    results[ 3] =  ordertest(upperbound, amount, exp, 0, 1);
-    results[ 4] =  ordertest(upperbound, amount, exp, 0, 2);
-    results[ 5] =  ordertest(upperbound, amount, exp, 1, 0);
-    results[ 6] =  ordertest(upperbound, amount, exp, 1, 2);
-    results[ 7] =  ordertest(upperbound, amount, exp, 2, 0);
-    results[ 8] =  ordertest(upperbound, amount, exp, 2, 1);
-    results[ 8] =  ordertest(upperbound, amount, exp, 2, 1);
-    results[ 8] =  ordertest(upperbound, amount, exp, 2, 1);
-    results[ 9] = randomtest(upperbound, amount, exp, new int[]{0,1});
-    results[10] = randomtest(upperbound, amount, exp, new int[]{0,2});
-    results[11] = randomtest(upperbound, amount, exp, new int[]{1,2});
-    results[12] = randomtest(upperbound, amount, exp, new int[]{0,1,2});
-    
-    // print("Test parameters: exponent=" + exp + ", amount=" + amount + ", upperbound=" + upperbound, results);
-    for (Result[] r : results) {
-      System.out.println("{" + exp + "-" + amount + "-" + upperbound + ":{"+ r[0] + "," + r[1] + "," + r[2] + "}}");
+  public void test (Test test) {
+    Result results[] = new Result[trees.size()];
+    for (int i=0; i<results.length; ++i) {
+      results[i] = new Result(); 
+      results[i].time = 0;
+    }
+    for (int s=0; s<=SAMPLE_COUNT; ++s) {
+      resetTrees(); 
+      prepareTrees();
+      // System.out.print("\r\033[K[ ] running test (" + s + "/" + SAMPLE_COUNT + ")");
+      for (int i=0; i<trees.size(); ++i) {
+        Result r = runOperationsOnTree(trees.get(i).tree, test.operations);
+        results[i].time += (r.time/SAMPLE_COUNT);
+      }
+    }
+    // System.out.println("\r\033[K[x] running test (" + SAMPLE_COUNT + "/" + SAMPLE_COUNT + ")");
+    // System.out.println();
+    test.results = results;
+  }
+
+  public Result runOperationsOnTree (SearchTreeB<Integer> tree, Operation operations[]) {
+    Result result = new Result(); 
+    result.time = 0;
+    long st = System.currentTimeMillis();
+    for (Operation o : operations) {
+      if (o.operation == 0) {
+        tree.add(o.value);
+      } else if (o.operation == 1) {
+        tree.remove(o.value);
+      } else if (o.operation == 2) {
+        tree.search(o.value);
+      } 
+    }
+    long et = System.currentTimeMillis();
+    result.time += et-st;
+    return result;
+  }
+  
+  public void resetTrees () {
+    for (Tree t : trees)
+      t.tree.clear();
+  }
+
+  private void prepareTrees () {
+    List<Integer> initsamples = prepareSampler.sample(amount);
+    for (Tree t : trees) { 
+      for (int sample : initsamples) {
+        t.tree.add(sample);
+      }
     }
   }
 
-  public Result runOperationsOnTree (SearchTree<Integer> tree, Operation operations[]) {
-    Result result = new Result(); 
-    long samplecount = 3;
-    result.time = 0;
-    for (int i=0; i<samplecount; ++i) {
-      long st = System.currentTimeMillis();
-      for (Operation o : operations) {
-        if (o.operation == 0) {
-          tree.add(o.value);
-        } else if (o.operation == 1) {
-          tree.remove(o.value);
-        } else if (o.operation == 2) {
-          tree.search(o.value);
-        } 
-      }
-      long et = System.currentTimeMillis();
-      result.time += et-st;
-    } 
-    result.time /= samplecount;
-    return result;
-  }
-
-  public Result[] singletest (int upperbound, int amount, double exp, int a) {
-    Operation operations[] = new Operation[amount];
-    List<Integer> samples  = new ZipfSampler(new Random(), upperbound, exp).sample(amount);
+  // Generates `amount` operations of type a
+  private Operation[] buildOperations (int a) {
+    HashSet<Integer> controle = new HashSet<>();
+    Operation operations[] = new Operation[amount]; 
+    List<Integer> samples = sampler.sample(amount);
     for (int i = 0; i < amount; ++i) {
       Operation operation = new Operation(); 
       operation.value = samples.get(i);
       operation.operation = a;
       operations[i] = operation;
+      controle.add(samples.get(i));
     }
-    
-    SemiSplayTree<Integer> st    = new SemiSplayTree<>();
-    OptimalTree<Integer> ot      = new OptimalTree<>();
-    BinarySearchTree<Integer> bt = new BinarySearchTree<>();
-
-    List<Integer> initsamples  = new Sampler(new Random(), upperbound).sample(amount);
-    if (a > 0) {
-      for (int sample : initsamples) {
-        st.add(sample);
-        ot.add(sample);
-        bt.add(sample);
-      } 
-    }
-   
-    Result results[] = new Result[] { 
-      runOperationsOnTree(st,operations),
-      runOperationsOnTree(ot,operations),
-      runOperationsOnTree(bt,operations) 
-      };
-    
-    return results;
+    // System.out.println("Generated " + ((double) controle.size()/(double) samples.size()*100) + "% unique samples");
+    return operations;
   }
-
-  public Result[] ordertest (int upperbound, int amount, double exp, int a1, int a2) {
+ 
+  // Generates `amount` operations.
+  // First all `amount`/2 `a1` operations and then
+  // `amount`/2 `a2` operations
+  private Operation[] buildOperations (int a1, int a2) {
     Operation operations[] = new Operation[amount];
-    List<Integer> samples  = new Sampler(new Random(), upperbound).sample(amount);
+    List<Integer> samples = sampler.sample(amount);
     for (int i = 0; i < amount/2; ++i) {
       Operation operation = new Operation(); 
       operation.value = samples.get(i);
@@ -150,32 +239,14 @@ public class Benchmarker {
       operation.operation = a2;
       operations[i] = operation;
     }
-    
-    SemiSplayTree<Integer> st    = new SemiSplayTree<>();
-    OptimalTree<Integer> ot      = new OptimalTree<>();
-    BinarySearchTree<Integer> bt = new BinarySearchTree<>();
-
-    List<Integer> initsamples  = new Sampler(new Random(), upperbound).sample(amount);
-    if (a1 > 0) {
-      for (int sample : initsamples) {
-        st.add(sample);
-        ot.add(sample);
-        bt.add(sample);
-      } 
-    }
-   
-    Result results[] = new Result[] { 
-      runOperationsOnTree(st,operations),
-      runOperationsOnTree(ot,operations),
-      runOperationsOnTree(bt,operations) 
-      };
-    
-    return results;
+    return operations;
   }
-  
-  public Result[] randomtest (int upperbound, int amount, double exp, int[] a) {
+ 
+  // Generates `amount` random operations
+  // Which operations to choose from is the parameter `a`
+  private Operation[] buildOperations (int a[]) {
     Operation operations[] = new Operation[amount];
-    List<Integer> samples  = new Sampler(new Random(), upperbound).sample(amount);
+    List<Integer> samples = sampler.sample(amount);
     Random random = new Random();
     for (int i = 0; i < amount; ++i) {
       Operation operation = new Operation(); 
@@ -184,20 +255,7 @@ public class Benchmarker {
       operation.operation = a[index];
       operations[i] = operation;
     }
-    
-    SemiSplayTree<Integer> st    = new SemiSplayTree<>();
-    OptimalTree<Integer> ot      = new OptimalTree<>();
-    BinarySearchTree<Integer> bt = new BinarySearchTree<>();
-
-    List<Integer> initsamples  = new Sampler(new Random(), upperbound).sample(amount);
-   
-    Result results[] = new Result[] { 
-      runOperationsOnTree(st,operations),
-      runOperationsOnTree(ot,operations),
-      runOperationsOnTree(bt,operations) 
-      };
-    
-    return results;
+    return operations;
   }
   
 }

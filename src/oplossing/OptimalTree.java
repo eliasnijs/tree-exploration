@@ -15,39 +15,13 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
         size = 0;
     }
 
-    private class DataEntry {
-        public E key;
-        public Double weight;
-    }
-    
-    public void placeKeys (ArrayList<E> keys, int m, int l) {
-        if (l == 0) { return;
-        }
-        this.add(keys.get(m));
-        placeKeys(keys,m-(l-m)/2,l/2);
-        placeKeys(keys,m+(l-m)/2,l/2);
-    }
-
     @Override
     public void optimize(List<E> keys, List<Double> weights) {
-        if (keys.size() != weights.size()) { System.out.println("invalid keys and weights! quitting `OptimalTree` test...");
+        List<Double> external = new ArrayList<>();
+        for (int i=0; i<keys.size()+1; ++i) {
+            external.add(0.0);
         }
-        root = null;
-        PriorityQueue<DataEntry> data = new PriorityQueue<>((e1,e2) -> { int r = e2.weight.compareTo(e1.weight); return (r != 0)? r : e1.key.compareTo(e2.key); });
-        for (int i=0; i < keys.size(); ++i) {
-            DataEntry e = new DataEntry();
-            e.key = keys.get(i); 
-            e.weight = weights.get(i);
-            data.offer(e);
-        }
-        while (data.size() > 0) {
-            double weight = data.peek().weight;
-            ArrayList<E> tbpKeys = new ArrayList<>();
-            while (data.size() > 0 && data.peek().weight == weight) {
-                tbpKeys.add(data.poll().key);
-            } 
-            placeKeys(tbpKeys, (tbpKeys.size()-1)/2, tbpKeys.size());
-        } 
+        optimize(keys, weights, external);
     }
 
     private static class WeightDataExternal {
@@ -57,8 +31,8 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
     }
     
     public void placeKeys (WeightDataExternal table[][], List<E> keys, int b, int e) {
-        if (b >= e) { return; 
-        }
+        if (b >= e) { 
+            return; }
         int i = table[e-b][b].rootindex;
         this.add(keys.get(i-1));
         placeKeys(table, keys, b, i-1);

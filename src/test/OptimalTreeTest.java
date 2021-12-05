@@ -1,8 +1,12 @@
 package test;
 
 import opgave.*;
+import opgave.samplers.Sampler;
 import oplossing.OptimalTree;
 
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.Random;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -12,13 +16,13 @@ import java.util.Map;
 
 public class OptimalTreeTest extends Test {
     
-    OptimalTreeTest (boolean printPriority) {
+    public OptimalTreeTest (boolean printPriority) {
         super(printPriority, "OPTIMALTREE TESTS");
         super.tests = tests;
     }
 
     private final HashMap<String,Runnable> tests = new HashMap<String, Runnable> () {{
-            // basic tests
+                 // basic tests 
             put("compile test",     () -> compileTest());
             put("add test 1",       () -> addTest1());
             put("search test 1",    () -> searchTest1());
@@ -26,13 +30,13 @@ public class OptimalTreeTest extends Test {
             put("remove test 2",    () -> removeTest2());
             put("remove test 3",    () -> removeTest3());
             put("iterator test",    () -> iteratorTest());
-            // No external 
+                // No external 
             put("throw away",       () -> shouldThrowAwayExisting());
             put("single item",      () -> singleItem());
             put("two descending",   () -> twoDescending());
             put("two ascending",    () -> twoAscending());
             put("seven equal",      () -> sevenEqual());
-            // External
+               // External
             put("seven equal external",     () -> sevenEqualWithExternal());
             put("single item external",     () -> singleItemWithExternal());
             put("descending external",      () -> descendingExternal());
@@ -40,6 +44,8 @@ public class OptimalTreeTest extends Test {
             put("simple external",          () -> simpleWithExternal());
             put("example with external",    () -> exampleWithExternal());
             put("zigzag external",          () -> zigzagExternal());
+            put("large", () -> big());
+            put("largOptimize", () -> bigOptimize());
     }};
 
     public double treeWeight(SearchTree<Integer> tree, List<Integer> keys, List<Double> internal, List<Double> external) {
@@ -340,4 +346,26 @@ public class OptimalTreeTest extends Test {
         assertTrue("simple with external", true);
     }
 
+    public void big () {
+        // OptimizableTree<Integer> tree = new OptimalTree<>();
+        // int amount = 10000;
+        // Sampler sampler = new Sampler(new Random(), amount);
+        // List<Double> internal = sampler.sample(amount).stream().map(x -> (double) x).collect(Collectors.toList());
+        // // List<Double> external = sampler.sample(amount).stream().map(x -> (double) x).collect(Collectors.toList());
+        // external.add(0.0);
+        // List<Integer> keys = sampler.sample(amount);
+        //
+        // tree.optimize(keys, internal);
+    }
+    
+    void bigOptimize() {
+        OptimizableTree<Integer> tree = new OptimalTree<>();
+        List<Integer> keys = new ArrayList<>();
+        List<Double> weights = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            keys.add(i);
+            weights.add((double) new Random().nextInt(100));
+        }
+        tree.optimize(keys, weights);
+    }
 }

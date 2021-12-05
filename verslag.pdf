@@ -1,11 +1,11 @@
 %!PS-Adobe-3.0
 %%Creator: groff version 1.22.4
-%%CreationDate: Sat Nov 20 19:51:33 2021
+%%CreationDate: Sat Dec  4 23:07:38 2021
 %%DocumentNeededResources: font Times-Bold
 %%+ font Times-Italic
 %%+ font Times-Roman
 %%DocumentSuppliedResources: procset grops 1.22 4
-%%Pages: 5
+%%Pages: 6
 %%PageOrder: Ascend
 %%DocumentMedia: Default 595 842 0 () ()
 %%Orientation: Portrait
@@ -237,43 +237,51 @@ BP
 %%EndPageSetup
 /F0 12/Times-Bold@0 SF(De beste binair)218.61 123 Q 3(eb)-.216 G
 (oekboom)-3 E/F1 10/Times-Italic@0 SF(Elias Nijs)268.41 159 Q/F2 10
-/Times-Roman@0 SF(Uni)253.62 177 Q -.15(ve)-.25 G(rsiteit Gent).15 E F1
-(ABSTRA)264.535 225 Q(CT)-.3 E F2 2.246(In dit v)133 249 R 2.246
+/Times-Roman@0 SF(Student aan de Uni)222.93 177 Q -.15(ve)-.25 G
+(rsiteit Gent).15 E(\(stdntnr: 02008758\))248.14 189 Q F1(ABSTRA)264.535
+225 Q(CT)-.3 E F2 2.246(In dit v)133 249 R 2.246
 (erslag bespreek ik mijn uitv)-.15 F 2.246(oering v)-.2 F 2.246
-(an het project v)-.25 F 2.245(oor Algoritmen en)-.2 F .214
-(Datastructuren 2 aand Uni)108 261 R -.15(ve)-.25 G .214
-(rsiteit Gent 2021. De opg).15 F -2.25 -.2(av e)-.05 H -.25(va)2.915 G
-2.715(nd).25 G .215(it project bestond erin een)-2.715 F .409
-(Semi-splayboom, een binaire zoekboom, met balancering op aan)108 273 R
-.409(vraag, en een zoekboom)-.4 F -.2(vo)108 285 S .043
-(lgens eigen heuristiek optimaal te implementeren aan de hand v).2 F
-.044(an benchmarks en theo-)-.25 F(retische inzichten.)108 297 Q 0 Cg EP
+(an het project v)-.25 F 2.245(oor Algoritmen en)-.2 F .94
+(Datastructuren 2 aan de Uni)108 261 R -.15(ve)-.25 G .941
+(rsiteit Gent 2021. De opg).15 F -2.25 -.2(av e)-.05 H -.25(va)3.641 G
+3.441(nd).25 G .941(it project bestond erin)-3.441 F .651
+(een Semi-splayboom, een binaire zoekboom, met balancering op aan)108
+273 R .651(vraag, en een zoek-)-.4 F .93(boom v)108 285 R .93
+(olgens eigen heuristiek optimaal te implementeren aan de hand v)-.2 F
+.93(an benchmarks)-.25 F(en theoretische inzichten.)108 297 Q 0 Cg EP
 %%Page: 2 2
 %%BeginPageSetup
 BP
 %%EndPageSetup
-/F0 10/Times-Roman@0 SF(-2-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
-(1. Semi-splayboom)72 84 R 2.5(1.1. Initiele)72 108 R(implementatie)2.5
-E 2.5(1.2. Optimalisatie)72 132 R(aan de hand v)2.5 E(an benchmarks)-.1
-E 0 Cg EP
+/F0 10/Times-Roman@0 SF(-2-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5(1. De)
+72 84 R(basis binair)2.5 E 2.5(ez)-.18 G(oekboom)-2.5 E F0
+(De basis binaire zoekboom bestaat uit alle v)97 111.6 Q(erw)-.15 E
+(achte functies, namelijk:)-.1 E 6.5<8372>72 127.2 S(oot\(\))-6.5 E 0 Cg
+EP
 %%Page: 3 3
 %%BeginPageSetup
 BP
 %%EndPageSetup
 /F0 10/Times-Roman@0 SF(-3-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
-(2. Binair)72 84 R 2.5(ez)-.18 G(oekboom met balancering op aan)-2.5 E
-(vraag)-.4 E 2.5(2.1. Initiele)72 120 R(implementatie)2.5 E 2.5
-(2.2. Optimalisatie)72 156 R(aan de hand v)2.5 E(an benchmarks)-.1 E 0
-Cg EP
+(2. Semi-splayboom)72 84 R 0 Cg EP
 %%Page: 4 4
 %%BeginPageSetup
 BP
 %%EndPageSetup
 /F0 10/Times-Roman@0 SF(-4-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
-(3. Binair)72 84 R 2.5(ez)-.18 G(oekboom met heuristiek naar k)-2.5 E
-(euze)-.1 E 2.5(3.1. Ov)72 120 R(erzicht v)-.1 E(an de v)-.1 E
+(3. Binair)72 84 R 2.5(ez)-.18 G(oekboom met balancering op aan)-2.5 E
+(vraag)-.4 E 2.5(3.1. Initiele)72 120 R(implementatie)2.5 E 2.5
+(3.2. Optimalisatie)72 156 R(aan de hand v)2.5 E(an benchmarks)-.1 E 0
+Cg EP
+%%Page: 5 5
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(-5-)282.17 48 Q/F1 10/Times-Bold@0 SF 2.5
+(4. Binair)72 84 R 2.5(ez)-.18 G(oekboom met heuristiek naar k)-2.5 E
+(euze)-.1 E 2.5(4.1. Ov)72 120 R(erzicht v)-.1 E(an de v)-.1 E
 (erschillende heuristiek)-.1 E(en)-.1 E F0(sdf)97 147.6 Q 0 Cg EP
-%%Page: 1 5
+%%Page: 1 6
 %%BeginPageSetup
 BP
 %%EndPageSetup
@@ -282,11 +290,12 @@ BP
 EEND 504 48 EBEGIN
 [/Dest /pdf:bm1T /Title (Table of Contents) /OUT pdfmark
 EEND/F0 12/Times-Bold@0 SF -1.104(Ta)242.886 96 S(ble of Contents)1.104
-E/F1 10/Times-Roman@0 SF 9.22(Semi-splayboom .)72 132 R -2.5 10
-(.......................... 2)10 H
-(Binaire zoekboom met balancering op aan)72 144 Q 11.06(vraag .)-.4 F
--2.5 10(................ 3)10 H(Binaire zoekboom met heuristiek naar k)
-72 156 Q 11.03(euze .)-.1 F -2.5 10(................. 4)10 H 0 Cg EP
+E/F1 10/Times-Roman@0 SF(De basis binaire zoekboom)72 132 Q -2.5 10
+(........................ 2)8.41 H 9.22(Semi-splayboom .)72 144 R -2.5
+10(.......................... 3)10 H
+(Binaire zoekboom met balancering op aan)72 156 Q 11.06(vraag .)-.4 F
+-2.5 10(................ 4)10 H(Binaire zoekboom met heuristiek naar k)
+72 168 Q 11.03(euze .)-.1 F -2.5 10(................. 5)10 H 0 Cg EP
 %%Trailer
 end
 %%EOF

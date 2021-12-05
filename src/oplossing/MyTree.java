@@ -46,7 +46,6 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
             int r = Double.valueOf(e2.getWeight()).compareTo(Double.valueOf(e1.getWeight())); 
             return (r != 0)? r : e1.getValue().compareTo(e2.getValue()); 
         });
-        System.out.println("sdf");
         makeQueue(root, queue);
         root = null;
         while (queue.size() > 0) {

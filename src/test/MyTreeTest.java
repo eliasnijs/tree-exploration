@@ -37,10 +37,11 @@ public class MyTreeTest extends Test {
         for (int v : values) {
             t.add(v);
         }
-        assertTrue("add-test 1 - node 2", t.root().getValue() == 2);
-        assertTrue("add-test 1 - node 3", t.root().getRight().getValue() == 3);
-        assertTrue("add-test 1 - node 1", t.root().getLeft().getValue() == 1);
-        assertTrue("add-test 1 - node 4", t.root().getRight().getRight().getValue() == 4);
+        System.out.println(treeToString(t.root())); 
+        assertTrue("add-test 1 - node 2", t.search(2));
+        assertTrue("add-test 1 - node 3", t.search(3));
+        assertTrue("add-test 1 - node 1", t.search(1));
+        assertTrue("add-test 1 - node 4", t.search(4));
     }
 
     public void searchTest1 () {
@@ -49,9 +50,9 @@ public class MyTreeTest extends Test {
         for (int v : values) {
             t.add(v);
         }
-        // for (int v : values) {
-        //     assertTrue("search-test 1 - node " + v, t.search(v));
-        // }
+        for (int v : values) {
+            assertTrue("search-test 1 - node " + v, t.search(v));
+        }
     }
 
     public void removeTest1 () {

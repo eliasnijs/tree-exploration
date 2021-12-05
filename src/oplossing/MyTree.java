@@ -1,6 +1,7 @@
 package oplossing;
 
 import opgave.Node;
+import oplossing.NodeMT;
 import oplossing.SearchTreeB;
 
 import java.util.ArrayList;
@@ -8,57 +9,75 @@ import java.util.Iterator;
 import java.util.ArrayDeque;
 import java.util.PriorityQueue;
 import java.util.List;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 
 public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
 
-    private static final double MAXUNSTABILITY = 1500;
+    private static final double MAXWEIGHT   = 21;
+    private static final double MAXUNSTABLE = 1.0;
+    private static final double SMLT        = 1.5;
 
-    private Node<E> root;
+    private NodeMT<E> root;
+    private HashSet<E> unstables;
     private int size;
 
-    public void SemiSplayTree () {
+    public MyTree () {
         root = null;
         size = 0;
+        unstables = new HashSet<>();
+    }
+
+    public void placeKeys (ArrayList<E> keys, int b, int e) {
+        if (b >= e) {
+            return;
+        }
+        int mid = b+(e-b)/2;
+        this.addnorm(keys.get(mid));
+        keys.set(mid, null);
+        placeKeys(keys, b, mid);
+        placeKeys(keys, mid+1, e);
+    }
+
+    public void balance() {
+        if (unstables.size() / size <= MAXUNSTABLE) {
+            return; 
+        }
+        PriorityQueue<NodeMT<E>> queue = new PriorityQueue<>((e1,e2) -> { 
+            int r = Double.valueOf(e2.getWeight()).compareTo(Double.valueOf(e1.getWeight())); 
+            return (r != 0)? r : e1.getValue().compareTo(e2.getValue()); 
+        });
+        makeQueue(root, queue);
+        root = null;
+        while (queue.size() > 1) {
+            double weight = queue.peek().getWeight();
+            ArrayList<E> tbpKeys = new ArrayList<>();
+            while (queue.size() > 0 && queue.peek().getWeight() == weight) {
+                tbpKeys.add(queue.poll().getValue());
+            } 
+            placeKeys(tbpKeys, 0, tbpKeys.size());
+        } 
+        unstables.clear();
+    }
+
+    public void makeQueue (NodeMT<E> node, PriorityQueue<NodeMT<E>> q) {
+        NodeMT<E> l = node.getLeft();
+        NodeMT<E> r = node.getRight();
+        if (l != null) makeQueue(l, q);
+        q.add(node);
+        if (r != null) makeQueue(r, q);
     }
     
-    private class DataEntry {
-        public E key;
-        public Double weight;
-    }
-
-    public void placeKeys (ArrayList<E> keys, int m, int l) {
-        if (l == 0) { return;
+    public void addnorm(E o) {
+        if (root == null) { 
+            root = new NodeMT<>(o, 1.0);
+            return;
         }
-        this.add(keys.get(m));
-        placeKeys(keys,m-(l-m)/2,l/2);
-        placeKeys(keys,m+(l-m)/2,l/2);
-    }
-
-    // TODO Add weights
-    public void optimize(List<E> keys, List<Double> weights) {
-        if (keys.size() != weights.size()) { System.out.println("invalid keys and weights! quitting `OptimalTree` test...");
-        }
-        root = null;
-        PriorityQueue<DataEntry> data = new PriorityQueue<>((e1,e2) -> { int r = e2.weight.compareTo(e1.weight); return (r != 0)? r : e1.key.compareTo(e2.key); });
-        for (int i=0; i < keys.size(); ++i) {
-            DataEntry e = new DataEntry();
-            e.key = keys.get(i); 
-            e.weight = weights.get(i);
-            data.offer(e);
-        }
-        while (data.size() > 0) {
-            double weight = data.peek().weight;
-            ArrayList<E> tbpKeys = new ArrayList<>();
-            while (data.size() > 0 && data.peek().weight == weight) {
-                tbpKeys.add(data.poll().key);
-            } 
-            placeKeys(tbpKeys, (tbpKeys.size()-1)/2, tbpKeys.size());
-        } 
+        addHelper(o, root);
     }
 
     @Override
-    public Node<E> root() {
+    public NodeMT<E> root() {
         return root;
     }
 
@@ -75,39 +94,47 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
    
     @Override
     public boolean search(E o) {
-        return root != null && searchHelper(o, root);
+        if (root == null) {
+            return false;
+        }
+        double w = searchHelper(o, root);
+        if (w > MAXWEIGHT) {
+            unstables.add(o);
+            balance();
+        } 
+        return w != -1.0;
     }
 
-    public boolean searchHelper (E o, Node<E> node) {
+    public double searchHelper (E o, NodeMT<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
-            return node.getLeft() != null && searchHelper(o, node.getLeft());
+            return (node.getLeft() != null)? searchHelper(o, node.getLeft()) : -1.0;
         } else if (o.compareTo(node.getValue()) > 0) {
-            return node.getRight() != null && searchHelper(o, node.getRight());
-        }
-        return true;
+            return (node.getRight() != null)? searchHelper(o, node.getRight()) : -1.0;
+        } 
+        node.multWeight(SMLT); 
+        return node.getWeight(); 
     }
 
     @Override
     public boolean add(E o) {
-        if (root == null) {
-            root = new Node<>(o);
+        if (root == null) { root = new NodeMT<>(o, 1.0);
             size += 1;
             return true;
         }
-        boolean b = addHelper(o, root);
-        size += b? 1 : 0;
+        boolean b = addHelper(o, root); size += b? 1 : 0;
         return b;
     }
 
-    public boolean addHelper(E o, Node<E> node) {
+    public boolean addHelper(E o, NodeMT<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
             if (node.getLeft() == null) {
-                node.setLeft(new Node<>(o));
+                node.setLeft(new NodeMT<>(o, 1.0));
                 return true;
             }
-            return addHelper(o, node.getLeft()); } else if (o.compareTo(node.getValue()) > 0) {
+            return addHelper(o, node.getLeft()); 
+        } else if (o.compareTo(node.getValue()) > 0) {
             if (node.getRight() == null) {
-                node.setRight(new Node<>(o));
+                node.setRight(new NodeMT<>(o, 1.0));
                 return true;
             }
             return addHelper(o, node.getRight());
@@ -121,12 +148,12 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
             return false; 
         }
        
-        Node<E> parent = removeFindParentNode(o, root, root);
+        NodeMT<E> parent = removeFindParentNodeMT(o, root, root);
         if (parent == null) {
             return false; 
         }
 
-        Node<E> node = (o.compareTo(root.getValue()) == 0)?  root : 
+        NodeMT<E> node = (o.compareTo(root.getValue()) == 0)?  root : 
             (o.compareTo(parent.getValue()) < 0)? parent.getLeft() : parent.getRight();
         
         int nodeIsSmaller = o.compareTo(parent.getValue());
@@ -147,7 +174,7 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
                 root = node.getRight();
             }
         } else if (node.getLeft() != null) {
-            Node<E> nParent = node.getLeft();
+            NodeMT<E> nParent = node.getLeft();
             if (nParent.getRight() != null) {
                 nParent = removeFindRightParent(node, nParent);
                 node.setValue(nParent.getRight().getValue());
@@ -168,15 +195,15 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
         return true;
     }
 
-    public Node<E> removeFindRightParent (Node<E> parent, Node<E> node) {
+    public NodeMT<E> removeFindRightParent (NodeMT<E> parent, NodeMT<E> node) {
         return (node.getRight() != null)? removeFindRightParent(node, node.getRight()) : parent;
     }
     
-    public Node<E> removeFindParentNode (E o, Node<E> parent, Node<E> node) {
+    public NodeMT<E> removeFindParentNodeMT (E o, NodeMT<E> parent, NodeMT<E> node) {
         if (o.compareTo(node.getValue()) < 0) {
-            return (node.getLeft() != null)? removeFindParentNode(o, node, node.getLeft()) : null;
+            return (node.getLeft() != null)? removeFindParentNodeMT(o, node, node.getLeft()) : null;
         } else if (o.compareTo(node.getValue()) > 0) {
-            return (node.getRight() != null)? removeFindParentNode(o, node, node.getRight()) : null;
+            return (node.getRight() != null)? removeFindParentNodeMT(o, node, node.getRight()) : null;
         }
         return parent;
     }
@@ -190,16 +217,16 @@ public class MyTree<E extends Comparable<E>> implements SearchTreeB<E> {
 
         private final ArrayDeque<E> fifo;
 
-        public Iter (Node<E> root) {
+        public Iter (NodeMT<E> root) {
             this.fifo = new ArrayDeque<>();
             if (root != null) {
                 fifoMaker(root);
             }
         }
 
-        public void fifoMaker (Node<E> node) {
-            Node<E> l = node.getLeft();
-            Node<E> r = node.getRight();
+        public void fifoMaker (NodeMT<E> node) {
+            NodeMT<E> l = node.getLeft();
+            NodeMT<E> r = node.getRight();
             if (l != null) {
                 fifoMaker(l);
             }

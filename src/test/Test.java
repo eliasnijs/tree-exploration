@@ -100,8 +100,8 @@ public abstract class Test {
         return 
             "{" + 
             n.getValue() + 
-            ((n.getLeft() == null)? "" : " < " + treeToString(n.getLeft())) + 
-            ((n.getRight() == null)? "" : " > " + treeToString(n.getRight())) + 
+            ((n.getLeft() == null)? "," : ", < " + treeToString(n.getLeft())) + 
+            ((n.getRight() == null)? "," : ", > " + treeToString(n.getRight())) + 
             "}";
     }
 

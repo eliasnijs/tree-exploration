@@ -32,7 +32,8 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
     
     public void placeKeys (WeightDataExternal table[][], List<E> keys, int b, int e) {
         if (b >= e) { 
-            return; }
+            return; 
+        }
         int i = table[e-b][b].rootindex;
         this.add(keys.get(i-1));
         placeKeys(table, keys, b, i-1);
@@ -105,8 +106,7 @@ public class OptimalTree<E extends Comparable<E>> implements OptimizableTree<E> 
     public boolean add(E o) {
         if (root == null) {
             root = new Node<>(o);
-            size += 1;
-            return true;
+            size += 1; return true;
         }
         boolean b = addHelper(o, root);
         size += b? 1 : 0;

@@ -68,9 +68,9 @@ public class Benchmarker {
     bst.name = "Simple";
     bst.tree = new BinarySearchTree<Integer>();
     
-    // trees.add(mytree);
-    trees.add(bst);
     trees.add(semisplay);
+    trees.add(mytree);
+    trees.add(bst);
   }
   
   public void print (Test[] tests) {
@@ -111,7 +111,6 @@ public class Benchmarker {
   // Add    and search (mix)  
   // remove and search (mix)  
   // all (mix)                
-
   public void run (int amount, int upperbound, double exp) {
     this.amount  = amount;
     this.upperbound = upperbound;
@@ -136,21 +135,24 @@ public class Benchmarker {
     allTest.name = "All (mix)";
     allTest.operations = buildOperations(new int[]{0,1,2});
     
+    Test allOrderTest = new Test();
+    allOrderTest.name = "All (order)";
+    allOrderTest.operations = buildOperations(0,2,1);
+    
     Test[] tests = new Test[]{
       addTest,
-      // removeTest,
-      // searchTest,
-      // allTest
+      removeTest,
+      searchTest,
+      allTest
       };
 
-    // System.out.println();
+    System.out.println();
     for (int i=0; i<tests.length; ++i) {
-      // System.out.println("Test " + (i+1) + "/" + tests.length + " - " + tests[i].name);
+      System.out.println("Test " + (i+1) + "/" + tests.length + " - " + tests[i].name);
       test(tests[i]);
-    }
-    // System.out.println();
+    } System.out.println();
     
-    csvprint(tests);
+    print(tests);
   }
 
   public void test (Test test) {
@@ -162,14 +164,14 @@ public class Benchmarker {
     for (int s=0; s<=SAMPLE_COUNT; ++s) {
       resetTrees(); 
       prepareTrees();
-      // System.out.print("\r\033[K[ ] running test (" + s + "/" + SAMPLE_COUNT + ")");
+      System.out.print("\r\033[K[ ] running test (" + s + "/" + SAMPLE_COUNT + ")");
       for (int i=0; i<trees.size(); ++i) {
         Result r = runOperationsOnTree(trees.get(i).tree, test.operations);
         results[i].time += (r.time/SAMPLE_COUNT);
       }
     }
-    // System.out.println("\r\033[K[x] running test (" + SAMPLE_COUNT + "/" + SAMPLE_COUNT + ")");
-    // System.out.println();
+    System.out.println("\r\033[K[x] running test (" + SAMPLE_COUNT + "/" + SAMPLE_COUNT + ")");
+    System.out.println();
     test.results = results;
   }
 
@@ -178,7 +180,7 @@ public class Benchmarker {
     result.time = 0;
     long st = System.currentTimeMillis();
     for (Operation o : operations) {
-      if (o.operation == 0) {
+      if (o.operation == 0) { 
         tree.add(o.value);
       } else if (o.operation == 1) {
         tree.remove(o.value);
@@ -217,7 +219,7 @@ public class Benchmarker {
       operations[i] = operation;
       controle.add(samples.get(i));
     }
-    // System.out.println("Generated " + ((double) controle.size()/(double) samples.size()*100) + "% unique samples");
+    System.out.println("Generated " + ((double) controle.size()/(double) samples.size()*100) + "% unique samples");
     return operations;
   }
  
@@ -237,6 +239,30 @@ public class Benchmarker {
       Operation operation = new Operation(); 
       operation.value = samples.get(i);
       operation.operation = a2;
+      operations[i] = operation;
+    }
+    return operations;
+  }
+
+  private Operation[] buildOperations (int a1, int a2, int a3) {
+    Operation operations[] = new Operation[amount];
+    List<Integer> samples = sampler.sample(amount);
+    for (int i = 0; i < amount/3; ++i) {
+      Operation operation = new Operation(); 
+      operation.value = samples.get(i);
+      operation.operation = a1;
+      operations[i] = operation;
+    }
+    for (int i = amount/3; i < (amount/3)*2; ++i) {
+      Operation operation = new Operation(); 
+      operation.value = samples.get(i);
+      operation.operation = a2;
+      operations[i] = operation;
+    }
+    for (int i = (amount/3)*2; i < amount; ++i) {
+      Operation operation = new Operation(); 
+      operation.value = samples.get(i);
+      operation.operation = a3;
       operations[i] = operation;
     }
     return operations;
